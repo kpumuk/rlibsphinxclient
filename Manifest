@@ -1,0 +1,8 @@
+ext/extconf.rb
+ext/rlibsphinxclient.i
+ext/rlibsphinxclient_wrap.c
+lib/sphinx/fast_client.rb
+lib/sphinx.rb
+Manifest
+Rakefile
+README.rdoc

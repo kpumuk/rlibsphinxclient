@@ -1,0 +1,15 @@
+require 'sphinx'
+sphinx = Sphinx::Client.new
+sphinx.SetServer('localhost', 3312)
+sphinx.SetConnectionTimeout(0)
+sphinx.SetLimits(0, 20, 1000, 0)
+sphinx.SetMaxQueryTime(0)
+sphinx.SetMatchMode(:extended2)
+sphinx.SetRankingMode(:bm25)
+sphinx.SetSortMode(:relevance, '')
+
+sphinx.Query('test')
+
+require 'sphinx'
+sphinx = Sphinx::Client.new
+sphinx.Query('test')
