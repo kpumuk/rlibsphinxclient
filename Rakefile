@@ -1,23 +1,21 @@
 require 'rubygems'
 require 'rake'
+require 'echoe'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |s|
-    s.name = 'rlibsphinxclient'
-    s.summary = 'A Ruby wrapper for pure C searchd client API library'
-    s.email = 'kpumuk@kpumuk.info'
-    s.homepage = 'http://github.com/kpumuk/rlibsphinxclient'
-    s.description = 'A Ruby wrapper for pure C searchd client API library'
-    s.authors = [ 'Dmytro Shteflyuk' ]
-  end
-rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+Echoe.new('rlibsphinxclient') do |p|
+  p.author = 'Dmytro Shteflyuk'
+  p.email = 'kpumuk@kpumuk.info'
+  p.summary = 'A Ruby wrapper for pure C searchd client API library'
+  p.url = 'http://github.com/kpumuk/rlibsphinxclient'
+  p.version = '0.1.0'
+end
+
+desc 'Update SWIG wrapper for pure C searchd client API library'
+task :swig do
+  system 'cd ext && swig -I/opt/local/include -I/opt/sphinx-0.9.9/include -ruby -autorename rlibsphinxclient.i'
 end
 
 task :t do
   system 'rake package'
-  system 'cd pkg && env ARCHFLAGS="-arch i386" DEBUG=1 gem install sphinx --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9'
+  system 'cd pkg && env ARCHFLAGS="-arch i386" DEBUG=1 gem install rlibsphinxclient --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9'
 end
-
-Dir["#{File.dirname(__FILE__)}/tasks/*.rake"].sort.each { |ext| load ext }

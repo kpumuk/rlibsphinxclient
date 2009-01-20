@@ -1,10 +1,5 @@
 require 'mkmf'
 
-if ENV['SWIG']
-  puts "running SWIG"
-  $stdout.write `swig -I/opt/local/include -I/opt/sphinx-0.9.9/include -ruby -autorename rlibsphinxclient.i`
-end
-
 $CFLAGS.gsub! /-O\d/, ''
 
 if ENV['DEBUG']
