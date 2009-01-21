@@ -2028,6 +2028,7 @@ _wrap_new_StSphinxWordinfo(int argc, VALUE *argv, VALUE self) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
   result = (sphinx_wordinfo *)(sphinx_wordinfo *) calloc(1, sizeof(sphinx_wordinfo));DATA_PTR(self) = result;
+  SWIG_RubyAddTracking(result, self);
   
   return self;
 fail:
@@ -2037,6 +2038,7 @@ fail:
 
 SWIGINTERN void
 free_sphinx_wordinfo(sphinx_wordinfo *arg1) {
+    SWIG_RubyRemoveTracking(arg1);
     free((char *) arg1);
 }
 
@@ -2889,6 +2891,7 @@ _wrap_new_StSphinxResult(int argc, VALUE *argv, VALUE self) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
   result = (sphinx_result *)(sphinx_result *) calloc(1, sizeof(sphinx_result));DATA_PTR(self) = result;
+  SWIG_RubyAddTracking(result, self);
   
   return self;
 fail:
@@ -2898,6 +2901,7 @@ fail:
 
 SWIGINTERN void
 free_sphinx_result(sphinx_result *arg1) {
+    SWIG_RubyRemoveTracking(arg1);
     free((char *) arg1);
 }
 
@@ -3435,6 +3439,7 @@ _wrap_new_StSphinxExcerptOptions(int argc, VALUE *argv, VALUE self) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
   result = (sphinx_excerpt_options *)(sphinx_excerpt_options *) calloc(1, sizeof(sphinx_excerpt_options));DATA_PTR(self) = result;
+  SWIG_RubyAddTracking(result, self);
   
   return self;
 fail:
@@ -3444,6 +3449,7 @@ fail:
 
 SWIGINTERN void
 free_sphinx_excerpt_options(sphinx_excerpt_options *arg1) {
+    SWIG_RubyRemoveTracking(arg1);
     free((char *) arg1);
 }
 
@@ -3706,6 +3712,7 @@ _wrap_new_StSphinxKeywordInfo(int argc, VALUE *argv, VALUE self) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
   result = (sphinx_keyword_info *)(sphinx_keyword_info *) calloc(1, sizeof(sphinx_keyword_info));DATA_PTR(self) = result;
+  SWIG_RubyAddTracking(result, self);
   
   return self;
 fail:
@@ -3715,6 +3722,7 @@ fail:
 
 SWIGINTERN void
 free_sphinx_keyword_info(sphinx_keyword_info *arg1) {
+    SWIG_RubyRemoveTracking(arg1);
     free((char *) arg1);
 }
 
@@ -3751,7 +3759,7 @@ _wrap_sphinx_destroy(int argc, VALUE *argv, VALUE self) {
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_st_sphinx_client, 0 |  0 );
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_st_sphinx_client, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "sphinx_destroy" "', argument " "1"" of type '" "sphinx_client *""'"); 
   }
@@ -4675,49 +4683,44 @@ _wrap_sphinx_query(int argc, VALUE *argv, VALUE self) {
     int i, j, k;
     VALUE var1 = Qnil, var2 = Qnil, var3 = Qnil, var4 = Qnil;
     unsigned int *mva = 0;
-    char *time = 0;
+    char *error = 0;
     
+    vresult = rb_hash_new();
     if (!result) {
-      vresult = Qfalse;
+      error = (char *)sphinx_error(arg1);
+      rb_hash_aset(vresult, rb_str_new2("error"), SWIG_FromCharPtr((const char *)error));
     } else {
-      vresult = rb_hash_new();
       rb_hash_aset(vresult, rb_str_new2("status"), INT2FIX(result->status));
       
       rb_hash_aset(vresult, rb_str_new2("error"), Qnil);
       rb_hash_aset(vresult, rb_str_new2("warning"), result->warning ? rb_str_new2(result->warning) : Qnil);
       rb_hash_aset(vresult, rb_str_new2("total"), INT2FIX(result->total));
       rb_hash_aset(vresult, rb_str_new2("total_found"), INT2FIX(result->total_found));
-      time = (char *)malloc(20);
-      sprintf(time, "%%.3f", result->time_msec / 1000.);
-      rb_hash_aset(vresult, rb_str_new2("time"), rb_str_new2(time));
-      free(time);
+      rb_hash_aset(vresult, rb_str_new2("time_msec"), INT2FIX(result->time_msec));
       
-      // fields
       var1 = rb_ary_new();
       for (i = 0; i < result->num_fields; i++) {
         rb_ary_store(var1, i, rb_str_new2(result->fields[i]));
       }
       rb_hash_aset(vresult, rb_str_new2("fields"), var1);
       
-      // attrs
       var1 = rb_hash_new();
       for (i = 0; i < result->num_attrs; i++) {
         rb_hash_aset(var1, rb_str_new2(result->attr_names[i]), SWIG_From_int(result->attr_types[i]));    
       }
       rb_hash_aset(vresult, rb_str_new2("attrs"), var1);    
       
-      // words
-      var1 = rb_hash_new();
+      var1 = rb_ary_new();
       for (i = 0; i < result->num_words; i++) {
         var2 = rb_hash_new();
+        rb_hash_aset(var2, rb_str_new2("word"), rb_str_new2(result->words[i].word));
         rb_hash_aset(var2, rb_str_new2("docs"), INT2FIX(result->words[i].docs));
         rb_hash_aset(var2, rb_str_new2("hits"), INT2FIX(result->words[i].hits));
         
-        rb_hash_aset(var1, rb_str_new2(result->words[i].word), var2);
+        rb_ary_store(var1, i, var2);
       }
       rb_hash_aset(vresult, rb_str_new2("words"), var1);
       
-      // matches
       var1 = rb_ary_new();
       for (i = 0; i < result->num_matches; i++) {
         var2 = rb_hash_new();
@@ -4840,49 +4843,44 @@ _wrap_sphinx_run_queries(int argc, VALUE *argv, VALUE self) {
     int i, j, k;
     VALUE var1 = Qnil, var2 = Qnil, var3 = Qnil, var4 = Qnil;
     unsigned int *mva = 0;
-    char *time = 0;
+    char *error = 0;
     
+    vresult = rb_hash_new();
     if (!result) {
-      vresult = Qfalse;
+      error = (char *)sphinx_error(arg1);
+      rb_hash_aset(vresult, rb_str_new2("error"), SWIG_FromCharPtr((const char *)error));
     } else {
-      vresult = rb_hash_new();
       rb_hash_aset(vresult, rb_str_new2("status"), INT2FIX(result->status));
       
       rb_hash_aset(vresult, rb_str_new2("error"), Qnil);
       rb_hash_aset(vresult, rb_str_new2("warning"), result->warning ? rb_str_new2(result->warning) : Qnil);
       rb_hash_aset(vresult, rb_str_new2("total"), INT2FIX(result->total));
       rb_hash_aset(vresult, rb_str_new2("total_found"), INT2FIX(result->total_found));
-      time = (char *)malloc(20);
-      sprintf(time, "%%.3f", result->time_msec / 1000.);
-      rb_hash_aset(vresult, rb_str_new2("time"), rb_str_new2(time));
-      free(time);
+      rb_hash_aset(vresult, rb_str_new2("time_msec"), INT2FIX(result->time_msec));
       
-      // fields
       var1 = rb_ary_new();
       for (i = 0; i < result->num_fields; i++) {
         rb_ary_store(var1, i, rb_str_new2(result->fields[i]));
       }
       rb_hash_aset(vresult, rb_str_new2("fields"), var1);
       
-      // attrs
       var1 = rb_hash_new();
       for (i = 0; i < result->num_attrs; i++) {
         rb_hash_aset(var1, rb_str_new2(result->attr_names[i]), SWIG_From_int(result->attr_types[i]));    
       }
       rb_hash_aset(vresult, rb_str_new2("attrs"), var1);    
       
-      // words
-      var1 = rb_hash_new();
+      var1 = rb_ary_new();
       for (i = 0; i < result->num_words; i++) {
         var2 = rb_hash_new();
+        rb_hash_aset(var2, rb_str_new2("word"), rb_str_new2(result->words[i].word));
         rb_hash_aset(var2, rb_str_new2("docs"), INT2FIX(result->words[i].docs));
         rb_hash_aset(var2, rb_str_new2("hits"), INT2FIX(result->words[i].hits));
         
-        rb_hash_aset(var1, rb_str_new2(result->words[i].word), var2);
+        rb_ary_store(var1, i, var2);
       }
       rb_hash_aset(vresult, rb_str_new2("words"), var1);
       
-      // matches
       var1 = rb_ary_new();
       for (i = 0; i < result->num_matches; i++) {
         var2 = rb_hash_new();
@@ -5714,7 +5712,7 @@ SWIGEXPORT void Init_rlibsphinxclient(void) {
   rb_define_method(cStSphinxWordinfo.klass, "hits", _wrap_StSphinxWordinfo_hits_get, -1);
   cStSphinxWordinfo.mark = 0;
   cStSphinxWordinfo.destroy = (void (*)(void *)) free_sphinx_wordinfo;
-  cStSphinxWordinfo.trackObjects = 0;
+  cStSphinxWordinfo.trackObjects = 1;
   
   cStSphinxResult.klass = rb_define_class_under(mRlibsphinxclient, "StSphinxResult", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_st_sphinx_result, (void *) &cStSphinxResult);
@@ -5752,7 +5750,7 @@ SWIGEXPORT void Init_rlibsphinxclient(void) {
   rb_define_method(cStSphinxResult.klass, "words", _wrap_StSphinxResult_words_get, -1);
   cStSphinxResult.mark = 0;
   cStSphinxResult.destroy = (void (*)(void *)) free_sphinx_result;
-  cStSphinxResult.trackObjects = 0;
+  cStSphinxResult.trackObjects = 1;
   
   cStSphinxExcerptOptions.klass = rb_define_class_under(mRlibsphinxclient, "StSphinxExcerptOptions", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_st_sphinx_excerpt_options, (void *) &cStSphinxExcerptOptions);
@@ -5778,7 +5776,7 @@ SWIGEXPORT void Init_rlibsphinxclient(void) {
   rb_define_method(cStSphinxExcerptOptions.klass, "weight_order", _wrap_StSphinxExcerptOptions_weight_order_get, -1);
   cStSphinxExcerptOptions.mark = 0;
   cStSphinxExcerptOptions.destroy = (void (*)(void *)) free_sphinx_excerpt_options;
-  cStSphinxExcerptOptions.trackObjects = 0;
+  cStSphinxExcerptOptions.trackObjects = 1;
   
   cStSphinxKeywordInfo.klass = rb_define_class_under(mRlibsphinxclient, "StSphinxKeywordInfo", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_st_sphinx_keyword_info, (void *) &cStSphinxKeywordInfo);
@@ -5794,7 +5792,7 @@ SWIGEXPORT void Init_rlibsphinxclient(void) {
   rb_define_method(cStSphinxKeywordInfo.klass, "num_hits", _wrap_StSphinxKeywordInfo_num_hits_get, -1);
   cStSphinxKeywordInfo.mark = 0;
   cStSphinxKeywordInfo.destroy = (void (*)(void *)) free_sphinx_keyword_info;
-  cStSphinxKeywordInfo.trackObjects = 0;
+  cStSphinxKeywordInfo.trackObjects = 1;
   rb_define_module_function(mRlibsphinxclient, "sphinx_create", _wrap_sphinx_create, -1);
   rb_define_module_function(mRlibsphinxclient, "sphinx_destroy", _wrap_sphinx_destroy, -1);
   rb_define_module_function(mRlibsphinxclient, "sphinx_error", _wrap_sphinx_error, -1);

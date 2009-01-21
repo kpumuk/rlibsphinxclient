@@ -1,5 +1,5 @@
 require 'sphinx'
-sphinx = Sphinx::Client.new
+sphinx = Sphinx::FastClient.new
 sphinx.SetServer('localhost', 3312)
 sphinx.SetConnectionTimeout(0)
 sphinx.SetLimits(0, 20, 1000, 0)
@@ -7,9 +7,21 @@ sphinx.SetMaxQueryTime(0)
 sphinx.SetMatchMode(:extended2)
 sphinx.SetRankingMode(:bm25)
 sphinx.SetSortMode(:relevance, '')
-
 sphinx.Query('test')
 
 require 'sphinx'
+sphinx = Sphinx::FastClient.new
+sphinx.Query('test hello')
+sphinx = nil
+GC.start
+
+require 'sphinx'
+require 'benchmark'
+sphinx = Sphinx::FastClient.new
+puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
+
 sphinx = Sphinx::Client.new
-sphinx.Query('test')
+puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
+
+require 'sphinx'
+1000.times { sphinx = Sphinx::FastClient.new; sphinx.Query('test hello'); sphinx.free }

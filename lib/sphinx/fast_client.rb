@@ -3,7 +3,12 @@ module Sphinx
     Lib = Rlibsphinxclient
 
     def initialize
-      @sphinx = Lib.sphinx_create(true)
+      @sphinx = Lib.sphinx_create(Lib::SPH_TRUE)
+    end
+    
+    def destroy
+      Lib.sphinx_destroy(@sphinx)
+      @sphinx = nil
     end
     
     def GetLastError
@@ -46,6 +51,7 @@ module Sphinx
     end
     
     def SetFieldWeights(weights)
+      puts weights.keys.inspect
       Lib.sphinx_set_field_weights(@sphinx, weights.size, weights.keys, weights.values)
     end
     
@@ -58,15 +64,15 @@ module Sphinx
     end
     
     def SetFilter(attribute, values, exclude = false)
-      Lib.sphinx_add_filter(@sphinx, attribute, values.length, values, exclude)
+      Lib.sphinx_add_filter(@sphinx, attribute, values.length, values, exclude ? Lib::SPH_TRUE : Lib::SPH_FALSE)
     end
 
     def SetFilterRange(attribute, min, max, exclude = false)
-      Lib.sphinx_add_filter_range(@sphinx, attribute, min, max, exclude)
+      Lib.sphinx_add_filter_range(@sphinx, attribute, min, max, exclude ? Lib::SPH_TRUE : Lib::SPH_FALSE)
     end
     
     def SetFilterFloatRange(attribute, min, max, exclude = false)
-      Lib.sphinx_add_filter_float_range(@sphinx, attribute, min, max, exclude)
+      Lib.sphinx_add_filter_float_range(@sphinx, attribute, min, max, exclude ? Lib::SPH_TRUE : Lib::SPH_FALSE)
     end
     
     def SetGeoAnchor(attrlat, attrlong, lat, long)

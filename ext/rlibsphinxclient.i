@@ -5,50 +5,57 @@
 
 %include "typemaps.i"
 
+%newobject sphinx_create;
+
 // Sphinx search results
 
 %typemap(out) (sphinx_result *) {
   int i, j, k;
   VALUE var1 = Qnil, var2 = Qnil, var3 = Qnil, var4 = Qnil;
   unsigned int *mva = 0;
-  char *error = 0;
+  char *time = 0;
   
-  $result = rb_hash_new();
   if (!$1) {
-    error = (char *)sphinx_error(arg1);
-    rb_hash_aset($result, rb_str_new2("error"), SWIG_FromCharPtr((const char *)error));
+    $result = Qfalse;
   } else {
+    $result = rb_hash_new();
     rb_hash_aset($result, rb_str_new2("status"), INT2FIX($1->status));
-
+    
     rb_hash_aset($result, rb_str_new2("error"), Qnil);
     rb_hash_aset($result, rb_str_new2("warning"), $1->warning ? rb_str_new2($1->warning) : Qnil);
     rb_hash_aset($result, rb_str_new2("total"), INT2FIX($1->total));
     rb_hash_aset($result, rb_str_new2("total_found"), INT2FIX($1->total_found));
-    rb_hash_aset($result, rb_str_new2("time_msec"), INT2FIX($1->time_msec));
+    time = (char *)malloc(20);
+    sprintf(time, "%%.3f", $1->time_msec / 1000.);
+    rb_hash_aset($result, rb_str_new2("time"), rb_str_new2(time));
+    free(time);
   
+    // fields
     var1 = rb_ary_new();
     for (i = 0; i < $1->num_fields; i++) {
       rb_ary_store(var1, i, rb_str_new2($1->fields[i]));
     }
     rb_hash_aset($result, rb_str_new2("fields"), var1);
   
+    // attrs
     var1 = rb_hash_new();
     for (i = 0; i < $1->num_attrs; i++) {
       rb_hash_aset(var1, rb_str_new2($1->attr_names[i]), SWIG_From_int($1->attr_types[i]));    
     }
     rb_hash_aset($result, rb_str_new2("attrs"), var1);    
   
-    var1 = rb_ary_new();
+    // words
+    var1 = rb_hash_new();
     for (i = 0; i < $1->num_words; i++) {
       var2 = rb_hash_new();
-      rb_hash_aset(var2, rb_str_new2("word"), rb_str_new2($1->words[i].word));
       rb_hash_aset(var2, rb_str_new2("docs"), INT2FIX($1->words[i].docs));
       rb_hash_aset(var2, rb_str_new2("hits"), INT2FIX($1->words[i].hits));
   
-      rb_ary_store(var1, i, var2);
+      rb_hash_aset(var1, rb_str_new2($1->words[i].word), var2);
     }
     rb_hash_aset($result, rb_str_new2("words"), var1);
 
+    // matches
     var1 = rb_ary_new();
     for (i = 0; i < $1->num_matches; i++) {
       var2 = rb_hash_new();
@@ -81,9 +88,5 @@
     rb_hash_aset($result, rb_str_new2("matches"), var1);
   }
 };
-
-%typemap(freearg) sphinx_result * {
- free((char *) $1);
-}
 
 %include "/opt/sphinx-0.9.9/include/sphinxclient.h"
