@@ -42,7 +42,7 @@ describe 'client API library', :shared => true do
     @sphinx.AddQuery('wifi', 'test1')
     @sphinx.AddQuery('gprs', 'test1')
     results = @sphinx.RunQueries
-    results.should be_an_instance_of(Array)
+    results.should be_an(Array)
     results.length.should == 2
     validate_results_wifi(results[0])
   end
@@ -77,6 +77,7 @@ describe 'client API library', :shared => true do
   it 'should process errors in RunQueries method' do
   	@sphinx.AddQuery('wifi', 'fakeindex')
   	r = @sphinx.RunQueries
+  	r.should be_an(Array)
   	r[0]['error'].length.should_not == 0
   end
   
@@ -92,7 +93,7 @@ describe 'client API library', :shared => true do
     }
     result['fields'].should == [ 'name', 'description' ]
     result['total'].should == 3
-    result['matches'].should be_an_instance_of(Array)
+    result['matches'].should be_an(Array)
     
     result['matches'][0]['id'].should == 2
     result['matches'][0]['weight'].should == 2

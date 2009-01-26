@@ -3,7 +3,7 @@ module Sphinx
     Lib = Rlibsphinxclient
 
     def initialize
-      @sphinx = Lib.sphinx_create(Lib::SPH_TRUE)
+      @sphinx = Lib.sphinx_create(true)
     end
     
     def destroy
@@ -63,15 +63,15 @@ module Sphinx
     end
     
     def SetFilter(attribute, values, exclude = false)
-      Lib.sphinx_add_filter(@sphinx, attribute, values.length, values, exclude ? Lib::SPH_TRUE : Lib::SPH_FALSE)
+      Lib.sphinx_add_filter(@sphinx, attribute, values.length, values, exclude)
     end
 
     def SetFilterRange(attribute, min, max, exclude = false)
-      Lib.sphinx_add_filter_range(@sphinx, attribute, min, max, exclude ? Lib::SPH_TRUE : Lib::SPH_FALSE)
+      Lib.sphinx_add_filter_range(@sphinx, attribute, min, max, exclude)
     end
     
     def SetFilterFloatRange(attribute, min, max, exclude = false)
-      Lib.sphinx_add_filter_float_range(@sphinx, attribute, min, max, exclude ? Lib::SPH_TRUE : Lib::SPH_FALSE)
+      Lib.sphinx_add_filter_float_range(@sphinx, attribute, min, max, exclude)
     end
     
     def SetGeoAnchor(attrlat, attrlong, lat, long)
@@ -107,7 +107,7 @@ module Sphinx
     end
     
     def RunQueries
-      Lib.sphinx_run_queries
+      Lib.sphinx_run_queries(@sphinx)
     end
 
     # int             sphinx_get_num_results      ( sphinx_client * client );
@@ -118,10 +118,11 @@ module Sphinx
     # sphinx_keyword_info *   sphinx_build_keywords     ( sphinx_client * client, const char * query, const char * index, sphinx_bool hits, int * out_num_keywords );
     
     def BuildExcerpts(docs, index, words, opts = {})
-      
+      Lib.sphinx_build_excerpts(@sphinx, docs.size, docs, index, words, opts)
     end
     
     def BuildKeywords(query, index, hits)
+      Lib.sphinx_build_keywords(@sphinx, query, index, hits)
     end
     
     def UpdateAttributes(index, attrs, values, mva = false)

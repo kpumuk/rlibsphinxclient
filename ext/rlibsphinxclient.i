@@ -7,6 +7,19 @@
 
 %newobject sphinx_create;
 
+// Processing (sphinx_bool) params
+%typemap(in) sphinx_bool {
+  switch(TYPE($input)) {
+    case T_TRUE:
+    case T_FALSE:
+      $1 = $input == Qtrue ? 1 : 0;
+      break;
+    default:
+      SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "', argument " "$argnum"" of type '" "$1_type""'");
+      break;
+  }
+}
+
 // Processing (sphinx_uint64_t *) params
 %typemap(in) sphinx_uint64_t * {
   /* Get the length of the array */
@@ -87,7 +100,7 @@
     rb_hash_aset($result, rb_str_new2("warning"), $1->warning ? rb_str_new2($1->warning) : Qnil);
     rb_hash_aset($result, rb_str_new2("total"), INT2FIX($1->total));
     rb_hash_aset($result, rb_str_new2("total_found"), INT2FIX($1->total_found));
-    time = (char *)malloc(20);
+    time = (char *) malloc(20);
     sprintf(time, "%%.3f", $1->time_msec / 1000.);
     rb_hash_aset($result, rb_str_new2("time"), rb_str_new2(time));
     free(time);
