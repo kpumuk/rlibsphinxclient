@@ -7,6 +7,68 @@
 
 %newobject sphinx_create;
 
+// Processing (sphinx_uint64_t *) params
+%typemap(in) sphinx_uint64_t * {
+  /* Get the length of the array */
+  int size = RARRAY($input)->len;
+  int i;
+  $1 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
+  /* Get the first element in memory */
+  VALUE *ptr = RARRAY($input)->ptr; 
+  for (i = 0; i < size; i++, ptr++) {
+    /* Convert Ruby Object String to char* */
+    $1[i]= NUM2ULL(*ptr);
+  }
+}
+
+// This cleans up the char (sphinx_uint64_t *) array created before 
+// the function call
+%typemap(freearg) sphinx_uint64_t * {
+  free((char *) $1);
+}
+
+// Processing (int *) params
+%typemap(in) int * {
+  /* Get the length of the array */
+  int size = RARRAY($input)->len;
+  int i;
+  $1 = (int *) malloc(size * sizeof(int));
+  /* Get the first element in memory */
+  VALUE *ptr = RARRAY($input)->ptr; 
+  for (i = 0; i < size; i++, ptr++) {
+    /* Convert Ruby Object String to char* */
+    $1[i]= NUM2INT(*ptr);
+  }
+}
+
+// This cleans up the char (sphinx_uint64_t *) array created before 
+// the function call
+%typemap(freearg) int * {
+  free((char *) $1);
+}
+
+// Processing (char **) params
+%typemap(in) char ** {
+  /* Get the length of the array */
+  int size = RARRAY($input)->len; 
+  int i;
+  $1 = (char **) malloc((size + 1) * sizeof(char *));
+  /* Get the first element in memory */
+  VALUE *ptr = RARRAY($input)->ptr; 
+  for (i = 0; i < size; i++, ptr++) {
+    /* Convert Ruby Object String to char* */
+    $1[i]= STR2CSTR(*ptr); 
+  }
+  $1[i] = NULL; /* End of list */
+}
+
+// This cleans up the char ** array created before 
+// the function call
+
+%typemap(freearg) char ** {
+  free((char *) $1);
+}
+
 // Sphinx search results
 
 %typemap(out) (sphinx_result *) {

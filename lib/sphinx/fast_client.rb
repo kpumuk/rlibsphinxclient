@@ -51,7 +51,6 @@ module Sphinx
     end
     
     def SetFieldWeights(weights)
-      puts weights.keys.inspect
       Lib.sphinx_set_field_weights(@sphinx, weights.size, weights.keys, weights.values)
     end
     

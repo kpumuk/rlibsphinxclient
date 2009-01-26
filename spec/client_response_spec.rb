@@ -8,8 +8,8 @@ describe 'client API library', :shared => true do
     @sphinx.SetMatchMode(Sphinx::Client::SPH_MATCH_EXTENDED2)
     @sphinx.SetRankingMode(Sphinx::Client::SPH_RANK_BM25)
     @sphinx.SetSortMode(Sphinx::Client::SPH_SORT_RELEVANCE)
-    # @sphinx.SetFieldWeights('group_id' => 10, 'rating' => 20)
-    # @sphinx.SetIndexWeights('test1' => 20, 'test2' => 30)
+    @sphinx.SetFieldWeights('group_id' => 10, 'rating' => 20)
+    @sphinx.SetIndexWeights('test1' => 20, 'test2' => 30)
     @sphinx.SetIDRange(1, 100)
     @sphinx.SetFilter('group_id', [1], true)
     @sphinx.SetFilterRange('group_id', 1, 2, true)
@@ -17,7 +17,7 @@ describe 'client API library', :shared => true do
     @sphinx.SetGroupBy('created_at', Sphinx::Client::SPH_GROUPBY_DAY)
     @sphinx.SetGroupDistinct('group_id')
     @sphinx.SetRetries(5, 10)
-    @sphinx.SetTimeout(4, 9)
+    # @sphinx.SetTimeout(4, 9)
     result = @sphinx.Query('wifi', 'test1')
     @sphinx.destroy
 

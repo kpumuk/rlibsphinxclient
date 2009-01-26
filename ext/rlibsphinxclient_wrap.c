@@ -2278,8 +2278,6 @@ _wrap_StSphinxResult_fields_set(int argc, VALUE *argv, VALUE self) {
   char **arg2 = (char **) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2289,15 +2287,29 @@ _wrap_StSphinxResult_fields_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "fields" "', argument " "1"" of type '" "sphinx_result *""'"); 
   }
   arg1 = (sphinx_result *)(argp1);
-  res2 = SWIG_ConvertPtr(argv[0], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "fields" "', argument " "2"" of type '" "char **""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[0])->len; 
+    int i;
+    arg2 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[0])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg2[i]= STR2CSTR(*ptr); 
+    }
+    arg2[i] = NULL; /* End of list */
   }
-  arg2 = (char **)(argp2);
   if (arg1) (arg1)->fields = arg2;
   
+  {
+    free((char *) arg2);
+  }
   return Qnil;
 fail:
+  {
+    free((char *) arg2);
+  }
   return Qnil;
 }
 
@@ -2386,8 +2398,6 @@ _wrap_StSphinxResult_attr_names_set(int argc, VALUE *argv, VALUE self) {
   char **arg2 = (char **) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2397,15 +2407,29 @@ _wrap_StSphinxResult_attr_names_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "attr_names" "', argument " "1"" of type '" "sphinx_result *""'"); 
   }
   arg1 = (sphinx_result *)(argp1);
-  res2 = SWIG_ConvertPtr(argv[0], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "attr_names" "', argument " "2"" of type '" "char **""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[0])->len; 
+    int i;
+    arg2 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[0])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg2[i]= STR2CSTR(*ptr); 
+    }
+    arg2[i] = NULL; /* End of list */
   }
-  arg2 = (char **)(argp2);
   if (arg1) (arg1)->attr_names = arg2;
   
+  {
+    free((char *) arg2);
+  }
   return Qnil;
 fail:
+  {
+    free((char *) arg2);
+  }
   return Qnil;
 }
 
@@ -2440,8 +2464,6 @@ _wrap_StSphinxResult_attr_types_set(int argc, VALUE *argv, VALUE self) {
   int *arg2 = (int *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2451,15 +2473,28 @@ _wrap_StSphinxResult_attr_types_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "attr_types" "', argument " "1"" of type '" "sphinx_result *""'"); 
   }
   arg1 = (sphinx_result *)(argp1);
-  res2 = SWIG_ConvertPtr(argv[0], &argp2,SWIGTYPE_p_int, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "attr_types" "', argument " "2"" of type '" "int *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[0])->len;
+    int i;
+    arg2 = (int *) malloc(size * sizeof(int));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[0])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg2[i]= NUM2INT(*ptr);
+    }
   }
-  arg2 = (int *)(argp2);
   if (arg1) (arg1)->attr_types = arg2;
   
+  {
+    free((char *) arg2);
+  }
   return Qnil;
 fail:
+  {
+    free((char *) arg2);
+  }
   return Qnil;
 }
 
@@ -4092,10 +4127,6 @@ _wrap_sphinx_set_field_weights(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  void *argp4 = 0 ;
-  int res4 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 4) || (argc > 4)) {
@@ -4111,20 +4142,47 @@ _wrap_sphinx_set_field_weights(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sphinx_set_field_weights" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = (int)(val2);
-  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "sphinx_set_field_weights" "', argument " "3"" of type '" "char const **""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[2])->len; 
+    int i;
+    arg3 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[2])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg3[i]= STR2CSTR(*ptr); 
+    }
+    arg3[i] = NULL; /* End of list */
   }
-  arg3 = (char **)(argp3);
-  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_int, 0 |  0 );
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_set_field_weights" "', argument " "4"" of type '" "int const *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[3])->len;
+    int i;
+    arg4 = (int *) malloc(size * sizeof(int));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg4[i]= NUM2INT(*ptr);
+    }
   }
-  arg4 = (int *)(argp4);
   result = (sphinx_bool)sphinx_set_field_weights(arg1,arg2,(char const **)arg3,(int const *)arg4);
   vresult = SWIG_From_int((int)(result));
+  {
+    free((char *) arg3);
+  }
+  {
+    free((char *) arg4);
+  }
   return vresult;
 fail:
+  {
+    free((char *) arg3);
+  }
+  {
+    free((char *) arg4);
+  }
   return Qnil;
 }
 
@@ -4140,10 +4198,6 @@ _wrap_sphinx_set_index_weights(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  void *argp4 = 0 ;
-  int res4 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 4) || (argc > 4)) {
@@ -4159,20 +4213,47 @@ _wrap_sphinx_set_index_weights(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sphinx_set_index_weights" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = (int)(val2);
-  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "sphinx_set_index_weights" "', argument " "3"" of type '" "char const **""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[2])->len; 
+    int i;
+    arg3 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[2])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg3[i]= STR2CSTR(*ptr); 
+    }
+    arg3[i] = NULL; /* End of list */
   }
-  arg3 = (char **)(argp3);
-  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_int, 0 |  0 );
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_set_index_weights" "', argument " "4"" of type '" "int const *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[3])->len;
+    int i;
+    arg4 = (int *) malloc(size * sizeof(int));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg4[i]= NUM2INT(*ptr);
+    }
   }
-  arg4 = (int *)(argp4);
   result = (sphinx_bool)sphinx_set_index_weights(arg1,arg2,(char const **)arg3,(int const *)arg4);
   vresult = SWIG_From_int((int)(result));
+  {
+    free((char *) arg3);
+  }
+  {
+    free((char *) arg4);
+  }
   return vresult;
 fail:
+  {
+    free((char *) arg3);
+  }
+  {
+    free((char *) arg4);
+  }
   return Qnil;
 }
 
@@ -4232,8 +4313,6 @@ _wrap_sphinx_add_filter(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   int val3 ;
   int ecode3 = 0 ;
-  void *argp4 = 0 ;
-  int res4 = 0 ;
   int val5 ;
   int ecode5 = 0 ;
   VALUE vresult = Qnil;
@@ -4256,11 +4335,18 @@ _wrap_sphinx_add_filter(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "sphinx_add_filter" "', argument " "3"" of type '" "int""'");
   } 
   arg3 = (int)(val3);
-  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_unsigned_long_long, 0 |  0 );
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_add_filter" "', argument " "4"" of type '" "sphinx_uint64_t const *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[3])->len;
+    int i;
+    arg4 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg4[i]= NUM2ULL(*ptr);
+    }
   }
-  arg4 = (sphinx_uint64_t *)(argp4);
   ecode5 = SWIG_AsVal_int(argv[4], &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "sphinx_add_filter" "', argument " "5"" of type '" "sphinx_bool""'");
@@ -4269,9 +4355,15 @@ _wrap_sphinx_add_filter(int argc, VALUE *argv, VALUE self) {
   result = (sphinx_bool)sphinx_add_filter(arg1,(char const *)arg2,arg3,(unsigned long long const *)arg4,arg5);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  {
+    free((char *) arg4);
+  }
   return vresult;
 fail:
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  {
+    free((char *) arg4);
+  }
   return Qnil;
 }
 
@@ -5163,8 +5255,6 @@ _wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
   int res4 ;
   char *buf4 = 0 ;
   int alloc4 = 0 ;
@@ -5188,11 +5278,19 @@ _wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sphinx_build_excerpts" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = (int)(val2);
-  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "sphinx_build_excerpts" "', argument " "3"" of type '" "char const **""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[2])->len; 
+    int i;
+    arg3 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[2])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg3[i]= STR2CSTR(*ptr); 
+    }
+    arg3[i] = NULL; /* End of list */
   }
-  arg3 = (char **)(argp3);
   res4 = SWIG_AsCharPtrAndSize(argv[3], &buf4, NULL, &alloc4);
   if (!SWIG_IsOK(res4)) {
     SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_build_excerpts" "', argument " "4"" of type '" "char const *""'");
@@ -5210,10 +5308,16 @@ _wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
   arg6 = (sphinx_excerpt_options *)(argp6);
   result = (char **)sphinx_build_excerpts(arg1,arg2,(char const **)arg3,(char const *)arg4,(char const *)arg5,arg6);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
+  {
+    free((char *) arg3);
+  }
   if (alloc4 == SWIG_NEWOBJ) free((char*)buf4);
   if (alloc5 == SWIG_NEWOBJ) free((char*)buf5);
   return vresult;
 fail:
+  {
+    free((char *) arg3);
+  }
   if (alloc4 == SWIG_NEWOBJ) free((char*)buf4);
   if (alloc5 == SWIG_NEWOBJ) free((char*)buf5);
   return Qnil;
@@ -5237,14 +5341,8 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   int val3 ;
   int ecode3 = 0 ;
-  void *argp4 = 0 ;
-  int res4 = 0 ;
   int val5 ;
   int ecode5 = 0 ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 7) || (argc > 7)) {
@@ -5265,32 +5363,72 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "sphinx_update_attributes" "', argument " "3"" of type '" "int""'");
   } 
   arg3 = (int)(val3);
-  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_p_char, 0 |  0 );
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_update_attributes" "', argument " "4"" of type '" "char const **""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[3])->len; 
+    int i;
+    arg4 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg4[i]= STR2CSTR(*ptr); 
+    }
+    arg4[i] = NULL; /* End of list */
   }
-  arg4 = (char **)(argp4);
   ecode5 = SWIG_AsVal_int(argv[4], &val5);
   if (!SWIG_IsOK(ecode5)) {
     SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "sphinx_update_attributes" "', argument " "5"" of type '" "int""'");
   } 
   arg5 = (int)(val5);
-  res6 = SWIG_ConvertPtr(argv[5], &argp6,SWIGTYPE_p_unsigned_long_long, 0 |  0 );
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "sphinx_update_attributes" "', argument " "6"" of type '" "sphinx_uint64_t const *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[5])->len;
+    int i;
+    arg6 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[5])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg6[i]= NUM2ULL(*ptr);
+    }
   }
-  arg6 = (sphinx_uint64_t *)(argp6);
-  res7 = SWIG_ConvertPtr(argv[6], &argp7,SWIGTYPE_p_unsigned_long_long, 0 |  0 );
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "sphinx_update_attributes" "', argument " "7"" of type '" "sphinx_uint64_t const *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[6])->len;
+    int i;
+    arg7 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[6])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg7[i]= NUM2ULL(*ptr);
+    }
   }
-  arg7 = (sphinx_uint64_t *)(argp7);
   result = (int)sphinx_update_attributes(arg1,(char const *)arg2,arg3,(char const **)arg4,arg5,(unsigned long long const *)arg6,(unsigned long long const *)arg7);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  {
+    free((char *) arg4);
+  }
+  {
+    free((char *) arg6);
+  }
+  {
+    free((char *) arg7);
+  }
   return vresult;
 fail:
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  {
+    free((char *) arg4);
+  }
+  {
+    free((char *) arg6);
+  }
+  {
+    free((char *) arg7);
+  }
   return Qnil;
 }
 
@@ -5313,8 +5451,6 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
   int alloc3 = 0 ;
   int val4 ;
   int ecode4 = 0 ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 5) || (argc > 5)) {
@@ -5340,19 +5476,32 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "sphinx_build_keywords" "', argument " "4"" of type '" "sphinx_bool""'");
   } 
   arg4 = (sphinx_bool)(val4);
-  res5 = SWIG_ConvertPtr(argv[4], &argp5,SWIGTYPE_p_int, 0 |  0 );
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "sphinx_build_keywords" "', argument " "5"" of type '" "int *""'"); 
+  {
+    /* Get the length of the array */
+    int size = RARRAY(argv[4])->len;
+    int i;
+    arg5 = (int *) malloc(size * sizeof(int));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY(argv[4])->ptr; 
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg5[i]= NUM2INT(*ptr);
+    }
   }
-  arg5 = (int *)(argp5);
   result = (sphinx_keyword_info *)sphinx_build_keywords(arg1,(char const *)arg2,(char const *)arg3,arg4,arg5);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_st_sphinx_keyword_info, 0 |  0 );
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
+  {
+    free((char *) arg5);
+  }
   return vresult;
 fail:
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
+  {
+    free((char *) arg5);
+  }
   return Qnil;
 }
 
