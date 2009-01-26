@@ -16,7 +16,9 @@ describe 'The Connect method of SphinxApi' do
     TCPSocket.should_receive(:new).with('localhost', 3312).and_return(@sock)
     @sock.should_receive(:recv).with(4).and_return([1].pack('N'))
     @sock.should_receive(:send).with([1].pack('N'), 0)
-    @sphinx.send(:Connect).should be(@sock)
+    @sphinx.send(:Connect) do |sock|
+      sock.should be(@sock)
+    end
   end
 
   it 'should raise exception when searchd protocol is not 1+' do
@@ -106,7 +108,7 @@ describe 'The Query method of SphinxApi' do
   before(:each) do
     @sphinx = Sphinx::Client.new
     @sock = mock('TCPSocket')
-    @sphinx.stub!(:Connect).and_return(@sock)
+    @sphinx.stub!(:Connect).and_yield(@sock)
     @sphinx.stub!(:GetResponse).and_raise(Sphinx::SphinxError)
   end
 
@@ -459,7 +461,7 @@ describe 'The RunQueries method of SphinxApi' do
   before(:each) do
     @sphinx = Sphinx::Client.new
     @sock = mock('TCPSocket')
-    @sphinx.stub!(:Connect).and_return(@sock)
+    @sphinx.stub!(:Connect).and_yield(@sock)
     @sphinx.stub!(:GetResponse).and_raise(Sphinx::SphinxError)
   end
 
@@ -482,7 +484,7 @@ describe 'The BuildExcerpts method of SphinxApi' do
   before(:each) do
     @sphinx = Sphinx::Client.new
     @sock = mock('TCPSocket')
-    @sphinx.stub!(:Connect).and_return(@sock)
+    @sphinx.stub!(:Connect).and_yield(@sock)
     @sphinx.stub!(:GetResponse).and_raise(Sphinx::SphinxError)
   end
   
@@ -517,7 +519,7 @@ describe 'The BuildKeywords method of SphinxApi' do
   before(:each) do
     @sphinx = Sphinx::Client.new
     @sock = mock('TCPSocket')
-    @sphinx.stub!(:Connect).and_return(@sock)
+    @sphinx.stub!(:Connect).and_yield(@sock)
     @sphinx.stub!(:GetResponse).and_raise(Sphinx::SphinxError)
   end
   
@@ -534,7 +536,7 @@ describe 'The UpdateAttributes method of SphinxApi' do
   before(:each) do
     @sphinx = Sphinx::Client.new
     @sock = mock('TCPSocket')
-    @sphinx.stub!(:Connect).and_return(@sock)
+    @sphinx.stub!(:Connect).and_yield(@sock)
     @sphinx.stub!(:GetResponse).and_raise(Sphinx::SphinxError)
   end
   

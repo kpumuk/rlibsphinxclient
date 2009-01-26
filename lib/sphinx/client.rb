@@ -956,7 +956,6 @@ module Sphinx
         
         v = sock.recv(4).unpack('N*').first.to_i
         if v < 1
-          sock.close
           @error = "expected searchd protocol version 1+, got version '#{v}'"
           raise SphinxConnectError, @error
         end
