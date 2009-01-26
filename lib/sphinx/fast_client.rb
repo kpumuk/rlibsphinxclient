@@ -110,12 +110,7 @@ module Sphinx
       Lib.sphinx_run_queries(@sphinx)
     end
 
-    # int             sphinx_get_num_results      ( sphinx_client * client );
-
-    # void            sphinx_init_excerpt_options   ( sphinx_excerpt_options * opts );
-    # char **           sphinx_build_excerpts     ( sphinx_client * client, int num_docs, const char ** docs, const char * index, const char * words, sphinx_excerpt_options * opts );
     # int             sphinx_update_attributes    ( sphinx_client * client, const char * index, int num_attrs, const char ** attrs, int num_docs, const sphinx_uint64_t * docids, const sphinx_uint64_t * values );
-    # sphinx_keyword_info *   sphinx_build_keywords     ( sphinx_client * client, const char * query, const char * index, sphinx_bool hits, int * out_num_keywords );
     
     def BuildExcerpts(docs, index, words, opts = {})
       Lib.sphinx_build_excerpts(@sphinx, docs.size, docs, index, words, opts)
@@ -126,7 +121,7 @@ module Sphinx
     end
     
     def UpdateAttributes(index, attrs, values, mva = false)
-      # Lib.sphinx_update_attributes(@sphinx, index, attrs.size, attrs, values.size, values.keys, values.values)
+      Lib.sphinx_update_attributes(@sphinx, index, attrs.size, attrs, values.size, values.keys, values.values.flatten)
     end
   end
 end
