@@ -5464,14 +5464,14 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
   {
-    free((char *) arg5);
+    
   }
   return vresult;
 fail:
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
   {
-    free((char *) arg5);
+    
   }
   return Qnil;
 }

@@ -180,6 +180,9 @@ char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char *
   $1 = &out_num_keywords;
 }
 
+%typemap(freearg) int * out_num_keywords {
+}
+
 %typemap(out) sphinx_keyword_info * {
   int i;
   VALUE keyword = Qnil;

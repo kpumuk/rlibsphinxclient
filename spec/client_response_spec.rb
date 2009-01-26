@@ -17,9 +17,7 @@ describe 'client API library', :shared => true do
     @sphinx.SetGroupBy('created_at', Sphinx::Client::SPH_GROUPBY_DAY)
     @sphinx.SetGroupDistinct('group_id')
     @sphinx.SetRetries(5, 10)
-    # @sphinx.SetTimeout(4, 9)
     result = @sphinx.Query('wifi', 'test1')
-    @sphinx.destroy
 
     result.should_not be_nil
   end
