@@ -12,7 +12,7 @@
   switch(TYPE($input)) {
     case T_TRUE:
     case T_FALSE:
-      $1 = $input == Qtrue ? 1 : 0;
+      $1 = $input == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "', argument " "$argnum"" of type '" "$1_type""'");
@@ -23,11 +23,11 @@
 // Processing (sphinx_uint64_t *) params
 %typemap(in) sphinx_uint64_t * {
   /* Get the length of the array */
-  int size = RARRAY($input)->len;
+  int size = RARRAY_LEN($input);
   int i;
   $1 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
   /* Get the first element in memory */
-  VALUE *ptr = RARRAY($input)->ptr; 
+  VALUE *ptr = RARRAY_PTR($input); 
   for (i = 0; i < size; i++, ptr++) {
     /* Convert Ruby Object String to char* */
     $1[i]= NUM2ULL(*ptr);
@@ -43,11 +43,11 @@
 // Processing (int *) params
 %typemap(in) int * {
   /* Get the length of the array */
-  int size = RARRAY($input)->len;
+  int size = RARRAY_LEN($input);
   int i;
   $1 = (int *) malloc(size * sizeof(int));
   /* Get the first element in memory */
-  VALUE *ptr = RARRAY($input)->ptr; 
+  VALUE *ptr = RARRAY_PTR($input);
   for (i = 0; i < size; i++, ptr++) {
     /* Convert Ruby Object String to char* */
     $1[i]= NUM2INT(*ptr);
@@ -63,11 +63,11 @@
 // Processing (char **) params
 %typemap(in) char ** {
   /* Get the length of the array */
-  int size = RARRAY($input)->len; 
+  int size = RARRAY_LEN($input);
   int i;
   $1 = (char **) malloc((size + 1) * sizeof(char *));
   /* Get the first element in memory */
-  VALUE *ptr = RARRAY($input)->ptr; 
+  VALUE *ptr = RARRAY_PTR($input);
   for (i = 0; i < size; i++, ptr++) {
     /* Convert Ruby Object String to char* */
     $1[i]= STR2CSTR(*ptr); 
@@ -77,13 +77,11 @@
 
 // This cleans up the char ** array created before 
 // the function call
-
 %typemap(freearg) char ** {
   free((char *) $1);
 }
 
 // Sphinx search results
-
 %typemap(out) (sphinx_result *) {
   int i, j, k;
   VALUE var1 = Qnil, var2 = Qnil, var3 = Qnil, var4 = Qnil;
@@ -163,5 +161,86 @@
     rb_hash_aset($result, rb_str_new2("matches"), var1);
   }
 };
+
+// Build excerpts arguments
+%typemap(in) sphinx_excerpt_options *
+  (sphinx_excerpt_options opts, VALUE val) {
+  Check_Type($input, T_HASH);
+  sphinx_init_excerpt_options(&opts);
+  
+  // before_match
+  val = rb_hash_aref($input, rb_str_new2("before_match"));
+  if (val != Qnil) {
+    Check_Type($input, T_STRING);
+    opts.before_match = STR2CSTR(val);
+  }
+
+  // after_match
+  val = rb_hash_aref($input, rb_str_new2("after_match"));
+  if (val != Qnil) {
+    Check_Type($input, T_STRING);
+    opts.after_match = STR2CSTR(val);
+  }
+
+  // chunk_separator
+  val = rb_hash_aref($input, rb_str_new2("chunk_separator"));
+  if (val != Qnil) {
+    Check_Type($input, T_STRING);
+    opts.chunk_separator = STR2CSTR(val);
+  }
+  
+  // limit
+  val = rb_hash_aref($input, rb_str_new2("limit"));
+  if (val != Qnil) {
+    Check_Type($input, T_FIXNUM);
+    opts.limit = NUM2INT(val);
+  }
+  
+  // around
+  val = rb_hash_aref($input, rb_str_new2("around"));
+  if (val != Qnil) {
+    Check_Type($input, T_FIXNUM);
+    opts.around = NUM2INT(val);
+  }
+
+  // exact_phrase
+  val = rb_hash_aref($input, rb_str_new2("exact_phrase"));
+  if (val != Qnil) {
+    opts.around = val == Qtrue ? SPH_TRUE : SPH_FALSE;
+  }
+
+  // single_passage
+  val = rb_hash_aref($input, rb_str_new2("single_passage"));
+  if (val != Qnil) {
+    opts.single_passage = val == Qtrue ? SPH_TRUE : SPH_FALSE;
+  }
+
+  // use_boundaries
+  val = rb_hash_aref($input, rb_str_new2("use_boundaries"));
+  if (val != Qnil) {
+    opts.use_boundaries = val == Qtrue ? SPH_TRUE : SPH_FALSE;
+  }
+
+  // weight_order
+  val = rb_hash_aref($input, rb_str_new2("weight_order"));
+  if (val != Qnil) {
+    opts.weight_order = val == Qtrue ? SPH_TRUE : SPH_FALSE;
+  }
+  
+  $1 = &opts;
+}
+
+%typemap(out) char ** {
+  int num_docs, i;
+  
+  SWIG_AsVal_int(argv[1], &num_docs);
+  
+  $result = rb_ary_new();
+  for (i = 0; i < num_docs; i++) {
+    rb_ary_store($result, i, rb_str_new2($1[i]));
+  }
+}
+char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char ** docs, const char * index, const char * words, sphinx_excerpt_options * opts);
+%typemap(out) char **
 
 %include "/opt/sphinx-0.9.9/include/sphinxclient.h"

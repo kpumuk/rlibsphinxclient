@@ -1592,13 +1592,55 @@ struct timeval rb_time_timeval(VALUE);
 #endif
 
 
-  #define SWIG_From_long   LONG2NUM 
+SWIGINTERN VALUE
+SWIG_ruby_failed(void)
+{
+  return Qnil;
+} 
 
 
-SWIGINTERNINLINE VALUE
-SWIG_From_int  (int value)
-{    
-  return SWIG_From_long  (value);
+/*@SWIG:%ruby_aux_method@*/
+SWIGINTERN VALUE SWIG_AUX_NUM2LONG(VALUE *args)
+{
+  VALUE obj = args[0];
+  VALUE type = TYPE(obj);
+  long *res = (long *)(args[1]);
+  *res = type == T_FIXNUM ? NUM2LONG(obj) : rb_big2long(obj);
+  return obj;
+}
+/*@SWIG@*/
+
+SWIGINTERN int
+SWIG_AsVal_long (VALUE obj, long* val)
+{
+  VALUE type = TYPE(obj);
+  if ((type == T_FIXNUM) || (type == T_BIGNUM)) {
+    long v;
+    VALUE a[2];
+    a[0] = obj;
+    a[1] = (VALUE)(&v);
+    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2LONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
+      if (val) *val = v;
+      return SWIG_OK;
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_int (VALUE obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (int)(v);
+    }
+  }  
+  return res;
 }
 
 
@@ -1656,6 +1698,16 @@ SWIG_AsCharPtrAndSize(VALUE obj, char** cptr, size_t* psize, int *alloc)
 
 
 
+  #define SWIG_From_long   LONG2NUM 
+
+
+SWIGINTERNINLINE VALUE
+SWIG_From_int  (int value)
+{    
+  return SWIG_From_long  (value);
+}
+
+
 SWIGINTERNINLINE VALUE 
 SWIG_FromCharPtrAndSize(const char* carray, size_t size)
 {
@@ -1677,58 +1729,6 @@ SWIGINTERNINLINE VALUE
 SWIG_FromCharPtr(const char *cptr)
 { 
   return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
-}
-
-
-SWIGINTERN VALUE
-SWIG_ruby_failed(void)
-{
-  return Qnil;
-} 
-
-
-/*@SWIG:%ruby_aux_method@*/
-SWIGINTERN VALUE SWIG_AUX_NUM2LONG(VALUE *args)
-{
-  VALUE obj = args[0];
-  VALUE type = TYPE(obj);
-  long *res = (long *)(args[1]);
-  *res = type == T_FIXNUM ? NUM2LONG(obj) : rb_big2long(obj);
-  return obj;
-}
-/*@SWIG@*/
-
-SWIGINTERN int
-SWIG_AsVal_long (VALUE obj, long* val)
-{
-  VALUE type = TYPE(obj);
-  if ((type == T_FIXNUM) || (type == T_BIGNUM)) {
-    long v;
-    VALUE a[2];
-    a[0] = obj;
-    a[1] = (VALUE)(&v);
-    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2LONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
-      if (val) *val = v;
-      return SWIG_OK;
-    }
-  }
-  return SWIG_TypeError;
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_int (VALUE obj, int *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = (int)(v);
-    }
-  }  
-  return res;
 }
 
 
@@ -1831,6 +1831,157 @@ SWIG_From_float  (float value)
 {    
   return SWIG_From_double  (value);
 }
+
+SWIGINTERN VALUE
+_wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
+  sphinx_client *arg1 = (sphinx_client *) 0 ;
+  int arg2 ;
+  char **arg3 = (char **) 0 ;
+  char *arg4 = (char *) 0 ;
+  char *arg5 = (char *) 0 ;
+  sphinx_excerpt_options *arg6 = (sphinx_excerpt_options *) 0 ;
+  char **result = 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int res4 ;
+  char *buf4 = 0 ;
+  int alloc4 = 0 ;
+  int res5 ;
+  char *buf5 = 0 ;
+  int alloc5 = 0 ;
+  sphinx_excerpt_options opts6 ;
+  VALUE val6 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 6) || (argc > 6)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 6)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_st_sphinx_client, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "sphinx_build_excerpts" "', argument " "1"" of type '" "sphinx_client *""'"); 
+  }
+  arg1 = (sphinx_client *)(argp1);
+  ecode2 = SWIG_AsVal_int(argv[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sphinx_build_excerpts" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = (int)(val2);
+  {
+    /* Get the length of the array */
+    int size = RARRAY_LEN(argv[2]);
+    int i;
+    arg3 = (char **) malloc((size + 1) * sizeof(char *));
+    /* Get the first element in memory */
+    VALUE *ptr = RARRAY_PTR(argv[2]);
+    for (i = 0; i < size; i++, ptr++) {
+      /* Convert Ruby Object String to char* */
+      arg3[i]= STR2CSTR(*ptr); 
+    }
+    arg3[i] = NULL; /* End of list */
+  }
+  res4 = SWIG_AsCharPtrAndSize(argv[3], &buf4, NULL, &alloc4);
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_build_excerpts" "', argument " "4"" of type '" "char const *""'");
+  }
+  arg4 = (char *)(buf4);
+  res5 = SWIG_AsCharPtrAndSize(argv[4], &buf5, NULL, &alloc5);
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "sphinx_build_excerpts" "', argument " "5"" of type '" "char const *""'");
+  }
+  arg5 = (char *)(buf5);
+  {
+    Check_Type(argv[5], T_HASH);
+    sphinx_init_excerpt_options(&opts6);
+    
+    // before_match
+    val6 = rb_hash_aref(argv[5], rb_str_new2("before_match"));
+    if (val6 != Qnil) {
+      Check_Type(argv[5], T_STRING);
+      opts6.before_match = STR2CSTR(val6);
+    }
+    
+    // after_match
+    val6 = rb_hash_aref(argv[5], rb_str_new2("after_match"));
+    if (val6 != Qnil) {
+      Check_Type(argv[5], T_STRING);
+      opts6.after_match = STR2CSTR(val6);
+    }
+    
+    // chunk_separator
+    val6 = rb_hash_aref(argv[5], rb_str_new2("chunk_separator"));
+    if (val6 != Qnil) {
+      Check_Type(argv[5], T_STRING);
+      opts6.chunk_separator = STR2CSTR(val6);
+    }
+    
+    // limit
+    val6 = rb_hash_aref(argv[5], rb_str_new2("limit"));
+    if (val6 != Qnil) {
+      Check_Type(argv[5], T_FIXNUM);
+      opts6.limit = NUM2INT(val6);
+    }
+    
+    // around
+    val6 = rb_hash_aref(argv[5], rb_str_new2("around"));
+    if (val6 != Qnil) {
+      Check_Type(argv[5], T_FIXNUM);
+      opts6.around = NUM2INT(val6);
+    }
+    
+    // exact_phrase
+    val6 = rb_hash_aref(argv[5], rb_str_new2("exact_phrase"));
+    if (val6 != Qnil) {
+      opts6.around = val6 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val6 = rb_hash_aref(argv[5], rb_str_new2("single_passage"));
+    if (val6 != Qnil) {
+      opts6.single_passage = val6 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val6 = rb_hash_aref(argv[5], rb_str_new2("use_boundaries"));
+    if (val6 != Qnil) {
+      opts6.use_boundaries = val6 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val6 = rb_hash_aref(argv[5], rb_str_new2("weight_order"));
+    if (val6 != Qnil) {
+      opts6.weight_order = val6 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg6 = &opts6;
+  }
+  result = (char **)sphinx_build_excerpts(arg1,arg2,(char const **)arg3,(char const *)arg4,(char const *)arg5,arg6);
+  {
+    int num_docs, i;
+    
+    SWIG_AsVal_int(argv[1], &num_docs);
+    
+    vresult = rb_ary_new();
+    for (i = 0; i < num_docs; i++) {
+      rb_ary_store(vresult, i, rb_str_new2(result[i]));
+    }
+  }
+  {
+    free((char *) arg3);
+  }
+  if (alloc4 == SWIG_NEWOBJ) free((char*)buf4);
+  if (alloc5 == SWIG_NEWOBJ) free((char*)buf5);
+  return vresult;
+fail:
+  {
+    free((char *) arg3);
+  }
+  if (alloc4 == SWIG_NEWOBJ) free((char*)buf4);
+  if (alloc5 == SWIG_NEWOBJ) free((char*)buf5);
+  return Qnil;
+}
+
 
 swig_class cStSphinxWordinfo;
 
@@ -2289,11 +2440,11 @@ _wrap_StSphinxResult_fields_set(int argc, VALUE *argv, VALUE self) {
   arg1 = (sphinx_result *)(argp1);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[0])->len; 
+    int size = RARRAY_LEN(argv[0]);
     int i;
     arg2 = (char **) malloc((size + 1) * sizeof(char *));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[0])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[0]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg2[i]= STR2CSTR(*ptr); 
@@ -2331,7 +2482,16 @@ _wrap_StSphinxResult_fields_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (sphinx_result *)(argp1);
   result = (char **) ((arg1)->fields);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
+  {
+    int num_docs, i;
+    
+    SWIG_AsVal_int(argv[1], &num_docs);
+    
+    vresult = rb_ary_new();
+    for (i = 0; i < num_docs; i++) {
+      rb_ary_store(vresult, i, rb_str_new2(result[i]));
+    }
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2409,11 +2569,11 @@ _wrap_StSphinxResult_attr_names_set(int argc, VALUE *argv, VALUE self) {
   arg1 = (sphinx_result *)(argp1);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[0])->len; 
+    int size = RARRAY_LEN(argv[0]);
     int i;
     arg2 = (char **) malloc((size + 1) * sizeof(char *));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[0])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[0]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg2[i]= STR2CSTR(*ptr); 
@@ -2451,7 +2611,16 @@ _wrap_StSphinxResult_attr_names_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (sphinx_result *)(argp1);
   result = (char **) ((arg1)->attr_names);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
+  {
+    int num_docs, i;
+    
+    SWIG_AsVal_int(argv[1], &num_docs);
+    
+    vresult = rb_ary_new();
+    for (i = 0; i < num_docs; i++) {
+      rb_ary_store(vresult, i, rb_str_new2(result[i]));
+    }
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2475,11 +2644,11 @@ _wrap_StSphinxResult_attr_types_set(int argc, VALUE *argv, VALUE self) {
   arg1 = (sphinx_result *)(argp1);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[0])->len;
+    int size = RARRAY_LEN(argv[0]);
     int i;
     arg2 = (int *) malloc(size * sizeof(int));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[0])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[0]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg2[i]= NUM2INT(*ptr);
@@ -2942,8 +3111,8 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_before_match_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
@@ -2951,11 +3120,71 @@ _wrap_StSphinxExcerptOptions_before_match_set(int argc, VALUE *argv, VALUE self)
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "before_match" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   res2 = SWIG_AsCharPtrAndSize(argv[0], &buf2, NULL, &alloc2);
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "before_match" "', argument " "2"" of type '" "char const *""'");
@@ -2979,18 +3208,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_before_match_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   char *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "before_match" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (char *) ((arg1)->before_match);
   vresult = SWIG_FromCharPtr((const char *)result);
   return vresult;
@@ -3003,8 +3292,8 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_after_match_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
@@ -3012,11 +3301,71 @@ _wrap_StSphinxExcerptOptions_after_match_set(int argc, VALUE *argv, VALUE self) 
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "after_match" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   res2 = SWIG_AsCharPtrAndSize(argv[0], &buf2, NULL, &alloc2);
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "after_match" "', argument " "2"" of type '" "char const *""'");
@@ -3040,18 +3389,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_after_match_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   char *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "after_match" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (char *) ((arg1)->after_match);
   vresult = SWIG_FromCharPtr((const char *)result);
   return vresult;
@@ -3064,8 +3473,8 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_chunk_separator_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   char *arg2 = (char *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
@@ -3073,11 +3482,71 @@ _wrap_StSphinxExcerptOptions_chunk_separator_set(int argc, VALUE *argv, VALUE se
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "chunk_separator" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   res2 = SWIG_AsCharPtrAndSize(argv[0], &buf2, NULL, &alloc2);
   if (!SWIG_IsOK(res2)) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "chunk_separator" "', argument " "2"" of type '" "char const *""'");
@@ -3101,18 +3570,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_chunk_separator_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   char *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "chunk_separator" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (char *) ((arg1)->chunk_separator);
   vresult = SWIG_FromCharPtr((const char *)result);
   return vresult;
@@ -3125,19 +3654,79 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_limit_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   int arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   int val2 ;
   int ecode2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "limit" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   ecode2 = SWIG_AsVal_int(argv[0], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "limit" "', argument " "2"" of type '" "int""'");
@@ -3155,18 +3744,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_limit_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   int result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "limit" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (int) ((arg1)->limit);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -3179,19 +3828,79 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_around_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   int arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   int val2 ;
   int ecode2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "around" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   ecode2 = SWIG_AsVal_int(argv[0], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "around" "', argument " "2"" of type '" "int""'");
@@ -3209,18 +3918,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_around_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   int result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "around" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (int) ((arg1)->around);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -3233,22 +4002,82 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_exact_phrase_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "exact_phrase" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   {
     switch(TYPE(argv[0])) {
     case T_TRUE:
     case T_FALSE:
-      arg2 = argv[0] == Qtrue ? 1 : 0;
+      arg2 = argv[0] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "exact_phrase" "', argument " "2"" of type '" "sphinx_bool""'");
@@ -3267,18 +4096,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_exact_phrase_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "exact_phrase" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (sphinx_bool) ((arg1)->exact_phrase);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -3291,22 +4180,82 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_single_passage_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "single_passage" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   {
     switch(TYPE(argv[0])) {
     case T_TRUE:
     case T_FALSE:
-      arg2 = argv[0] == Qtrue ? 1 : 0;
+      arg2 = argv[0] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "single_passage" "', argument " "2"" of type '" "sphinx_bool""'");
@@ -3325,18 +4274,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_single_passage_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "single_passage" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (sphinx_bool) ((arg1)->single_passage);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -3349,22 +4358,82 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_use_boundaries_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "use_boundaries" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   {
     switch(TYPE(argv[0])) {
     case T_TRUE:
     case T_FALSE:
-      arg2 = argv[0] == Qtrue ? 1 : 0;
+      arg2 = argv[0] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "use_boundaries" "', argument " "2"" of type '" "sphinx_bool""'");
@@ -3383,18 +4452,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_use_boundaries_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "use_boundaries" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (sphinx_bool) ((arg1)->use_boundaries);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -3407,22 +4536,82 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_weight_order_set(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "weight_order" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   {
     switch(TYPE(argv[0])) {
     case T_TRUE:
     case T_FALSE:
-      arg2 = argv[0] == Qtrue ? 1 : 0;
+      arg2 = argv[0] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "weight_order" "', argument " "2"" of type '" "sphinx_bool""'");
@@ -3441,18 +4630,78 @@ SWIGINTERN VALUE
 _wrap_StSphinxExcerptOptions_weight_order_get(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
   sphinx_bool result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   VALUE vresult = Qnil;
   
   if ((argc < 0) || (argc > 0)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "weight_order" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(self, T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(self, rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(self, rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(self, rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(self, rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(self, rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(self, T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(self, rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(self, rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(self, rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(self, rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   result = (sphinx_bool) ((arg1)->weight_order);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -3782,7 +5031,7 @@ _wrap_sphinx_create(int argc, VALUE *argv, VALUE self) {
     switch(TYPE(argv[0])) {
     case T_TRUE:
     case T_FALSE:
-      arg1 = argv[0] == Qtrue ? 1 : 0;
+      arg1 = argv[0] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "sphinx_create" "', argument " "1"" of type '" "sphinx_bool""'");
@@ -4164,11 +5413,11 @@ _wrap_sphinx_set_field_weights(int argc, VALUE *argv, VALUE self) {
   arg2 = (int)(val2);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[2])->len; 
+    int size = RARRAY_LEN(argv[2]);
     int i;
     arg3 = (char **) malloc((size + 1) * sizeof(char *));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[2])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[2]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg3[i]= STR2CSTR(*ptr); 
@@ -4177,11 +5426,11 @@ _wrap_sphinx_set_field_weights(int argc, VALUE *argv, VALUE self) {
   }
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[3])->len;
+    int size = RARRAY_LEN(argv[3]);
     int i;
     arg4 = (int *) malloc(size * sizeof(int));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[3]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg4[i]= NUM2INT(*ptr);
@@ -4235,11 +5484,11 @@ _wrap_sphinx_set_index_weights(int argc, VALUE *argv, VALUE self) {
   arg2 = (int)(val2);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[2])->len; 
+    int size = RARRAY_LEN(argv[2]);
     int i;
     arg3 = (char **) malloc((size + 1) * sizeof(char *));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[2])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[2]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg3[i]= STR2CSTR(*ptr); 
@@ -4248,11 +5497,11 @@ _wrap_sphinx_set_index_weights(int argc, VALUE *argv, VALUE self) {
   }
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[3])->len;
+    int size = RARRAY_LEN(argv[3]);
     int i;
     arg4 = (int *) malloc(size * sizeof(int));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[3]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg4[i]= NUM2INT(*ptr);
@@ -4355,11 +5604,11 @@ _wrap_sphinx_add_filter(int argc, VALUE *argv, VALUE self) {
   arg3 = (int)(val3);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[3])->len;
+    int size = RARRAY_LEN(argv[3]);
     int i;
     arg4 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[3]); 
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg4[i]= NUM2ULL(*ptr);
@@ -4369,7 +5618,7 @@ _wrap_sphinx_add_filter(int argc, VALUE *argv, VALUE self) {
     switch(TYPE(argv[4])) {
     case T_TRUE:
     case T_FALSE:
-      arg5 = argv[4] == Qtrue ? 1 : 0;
+      arg5 = argv[4] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "sphinx_add_filter" "', argument " "5"" of type '" "sphinx_bool""'");
@@ -4438,7 +5687,7 @@ _wrap_sphinx_add_filter_range(int argc, VALUE *argv, VALUE self) {
     switch(TYPE(argv[4])) {
     case T_TRUE:
     case T_FALSE:
-      arg5 = argv[4] == Qtrue ? 1 : 0;
+      arg5 = argv[4] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "sphinx_add_filter_range" "', argument " "5"" of type '" "sphinx_bool""'");
@@ -4501,7 +5750,7 @@ _wrap_sphinx_add_filter_float_range(int argc, VALUE *argv, VALUE self) {
     switch(TYPE(argv[4])) {
     case T_TRUE:
     case T_FALSE:
-      arg5 = argv[4] == Qtrue ? 1 : 0;
+      arg5 = argv[4] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "sphinx_add_filter_float_range" "', argument " "5"" of type '" "sphinx_bool""'");
@@ -5256,102 +6505,80 @@ fail:
 SWIGINTERN VALUE
 _wrap_sphinx_init_excerpt_options(int argc, VALUE *argv, VALUE self) {
   sphinx_excerpt_options *arg1 = (sphinx_excerpt_options *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
+  sphinx_excerpt_options opts1 ;
+  VALUE val1 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
   }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "sphinx_init_excerpt_options" "', argument " "1"" of type '" "sphinx_excerpt_options *""'"); 
+  {
+    Check_Type(argv[0], T_HASH);
+    sphinx_init_excerpt_options(&opts1);
+    
+    // before_match
+    val1 = rb_hash_aref(argv[0], rb_str_new2("before_match"));
+    if (val1 != Qnil) {
+      Check_Type(argv[0], T_STRING);
+      opts1.before_match = STR2CSTR(val1);
+    }
+    
+    // after_match
+    val1 = rb_hash_aref(argv[0], rb_str_new2("after_match"));
+    if (val1 != Qnil) {
+      Check_Type(argv[0], T_STRING);
+      opts1.after_match = STR2CSTR(val1);
+    }
+    
+    // chunk_separator
+    val1 = rb_hash_aref(argv[0], rb_str_new2("chunk_separator"));
+    if (val1 != Qnil) {
+      Check_Type(argv[0], T_STRING);
+      opts1.chunk_separator = STR2CSTR(val1);
+    }
+    
+    // limit
+    val1 = rb_hash_aref(argv[0], rb_str_new2("limit"));
+    if (val1 != Qnil) {
+      Check_Type(argv[0], T_FIXNUM);
+      opts1.limit = NUM2INT(val1);
+    }
+    
+    // around
+    val1 = rb_hash_aref(argv[0], rb_str_new2("around"));
+    if (val1 != Qnil) {
+      Check_Type(argv[0], T_FIXNUM);
+      opts1.around = NUM2INT(val1);
+    }
+    
+    // exact_phrase
+    val1 = rb_hash_aref(argv[0], rb_str_new2("exact_phrase"));
+    if (val1 != Qnil) {
+      opts1.around = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // single_passage
+    val1 = rb_hash_aref(argv[0], rb_str_new2("single_passage"));
+    if (val1 != Qnil) {
+      opts1.single_passage = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // use_boundaries
+    val1 = rb_hash_aref(argv[0], rb_str_new2("use_boundaries"));
+    if (val1 != Qnil) {
+      opts1.use_boundaries = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    // weight_order
+    val1 = rb_hash_aref(argv[0], rb_str_new2("weight_order"));
+    if (val1 != Qnil) {
+      opts1.weight_order = val1 == Qtrue ? SPH_TRUE : SPH_FALSE;
+    }
+    
+    arg1 = &opts1;
   }
-  arg1 = (sphinx_excerpt_options *)(argp1);
   sphinx_init_excerpt_options(arg1);
   return Qnil;
 fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
-  sphinx_client *arg1 = (sphinx_client *) 0 ;
-  int arg2 ;
-  char **arg3 = (char **) 0 ;
-  char *arg4 = (char *) 0 ;
-  char *arg5 = (char *) 0 ;
-  sphinx_excerpt_options *arg6 = (sphinx_excerpt_options *) 0 ;
-  char **result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int res4 ;
-  char *buf4 = 0 ;
-  int alloc4 = 0 ;
-  int res5 ;
-  char *buf5 = 0 ;
-  int alloc5 = 0 ;
-  void *argp6 = 0 ;
-  int res6 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 6) || (argc > 6)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 6)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_st_sphinx_client, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "sphinx_build_excerpts" "', argument " "1"" of type '" "sphinx_client *""'"); 
-  }
-  arg1 = (sphinx_client *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "sphinx_build_excerpts" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = (int)(val2);
-  {
-    /* Get the length of the array */
-    int size = RARRAY(argv[2])->len; 
-    int i;
-    arg3 = (char **) malloc((size + 1) * sizeof(char *));
-    /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[2])->ptr; 
-    for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg3[i]= STR2CSTR(*ptr); 
-    }
-    arg3[i] = NULL; /* End of list */
-  }
-  res4 = SWIG_AsCharPtrAndSize(argv[3], &buf4, NULL, &alloc4);
-  if (!SWIG_IsOK(res4)) {
-    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "sphinx_build_excerpts" "', argument " "4"" of type '" "char const *""'");
-  }
-  arg4 = (char *)(buf4);
-  res5 = SWIG_AsCharPtrAndSize(argv[4], &buf5, NULL, &alloc5);
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "sphinx_build_excerpts" "', argument " "5"" of type '" "char const *""'");
-  }
-  arg5 = (char *)(buf5);
-  res6 = SWIG_ConvertPtr(argv[5], &argp6,SWIGTYPE_p_st_sphinx_excerpt_options, 0 |  0 );
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "sphinx_build_excerpts" "', argument " "6"" of type '" "sphinx_excerpt_options *""'"); 
-  }
-  arg6 = (sphinx_excerpt_options *)(argp6);
-  result = (char **)sphinx_build_excerpts(arg1,arg2,(char const **)arg3,(char const *)arg4,(char const *)arg5,arg6);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
-  {
-    free((char *) arg3);
-  }
-  if (alloc4 == SWIG_NEWOBJ) free((char*)buf4);
-  if (alloc5 == SWIG_NEWOBJ) free((char*)buf5);
-  return vresult;
-fail:
-  {
-    free((char *) arg3);
-  }
-  if (alloc4 == SWIG_NEWOBJ) free((char*)buf4);
-  if (alloc5 == SWIG_NEWOBJ) free((char*)buf5);
   return Qnil;
 }
 
@@ -5397,11 +6624,11 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
   arg3 = (int)(val3);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[3])->len; 
+    int size = RARRAY_LEN(argv[3]);
     int i;
     arg4 = (char **) malloc((size + 1) * sizeof(char *));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[3])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[3]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg4[i]= STR2CSTR(*ptr); 
@@ -5415,11 +6642,11 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
   arg5 = (int)(val5);
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[5])->len;
+    int size = RARRAY_LEN(argv[5]);
     int i;
     arg6 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[5])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[5]); 
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg6[i]= NUM2ULL(*ptr);
@@ -5427,11 +6654,11 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
   }
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[6])->len;
+    int size = RARRAY_LEN(argv[6]);
     int i;
     arg7 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[6])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[6]); 
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg7[i]= NUM2ULL(*ptr);
@@ -5505,7 +6732,7 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
     switch(TYPE(argv[3])) {
     case T_TRUE:
     case T_FALSE:
-      arg4 = argv[3] == Qtrue ? 1 : 0;
+      arg4 = argv[3] == Qtrue ? SPH_TRUE : SPH_FALSE;
       break;
     default:
       SWIG_exception_fail(SWIG_TypeError, "in method '" "sphinx_build_keywords" "', argument " "4"" of type '" "sphinx_bool""'");
@@ -5514,11 +6741,11 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
   }
   {
     /* Get the length of the array */
-    int size = RARRAY(argv[4])->len;
+    int size = RARRAY_LEN(argv[4]);
     int i;
     arg5 = (int *) malloc(size * sizeof(int));
     /* Get the first element in memory */
-    VALUE *ptr = RARRAY(argv[4])->ptr; 
+    VALUE *ptr = RARRAY_PTR(argv[4]);
     for (i = 0; i < size; i++, ptr++) {
       /* Convert Ruby Object String to char* */
       arg5[i]= NUM2INT(*ptr);
@@ -5848,6 +7075,7 @@ SWIGEXPORT void Init_rlibsphinxclient(void) {
   }
   
   SWIG_RubyInitializeTrackings();
+  rb_define_module_function(mRlibsphinxclient, "sphinx_build_excerpts", _wrap_sphinx_build_excerpts, -1);
   rb_define_const(mRlibsphinxclient, "SEARCHD_OK", SWIG_From_int((int)(SEARCHD_OK)));
   rb_define_const(mRlibsphinxclient, "SEARCHD_ERROR", SWIG_From_int((int)(SEARCHD_ERROR)));
   rb_define_const(mRlibsphinxclient, "SEARCHD_RETRY", SWIG_From_int((int)(SEARCHD_RETRY)));
@@ -6013,7 +7241,6 @@ SWIGEXPORT void Init_rlibsphinxclient(void) {
   rb_define_module_function(mRlibsphinxclient, "sphinx_get_float", _wrap_sphinx_get_float, -1);
   rb_define_module_function(mRlibsphinxclient, "sphinx_get_mva", _wrap_sphinx_get_mva, -1);
   rb_define_module_function(mRlibsphinxclient, "sphinx_init_excerpt_options", _wrap_sphinx_init_excerpt_options, -1);
-  rb_define_module_function(mRlibsphinxclient, "sphinx_build_excerpts", _wrap_sphinx_build_excerpts, -1);
   rb_define_module_function(mRlibsphinxclient, "sphinx_update_attributes", _wrap_sphinx_update_attributes, -1);
   rb_define_module_function(mRlibsphinxclient, "sphinx_build_keywords", _wrap_sphinx_build_keywords, -1);
 }
