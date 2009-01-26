@@ -7,6 +7,10 @@
 
 %newobject sphinx_create;
 
+/* -----------------------------------------------------------------------------
+ *  This section contains generic input parameter type mappings.
+ * ----------------------------------------------------------------------------- */
+
 // Processing (sphinx_bool) params
 %typemap(in) sphinx_bool {
   switch(TYPE($input)) {
@@ -20,66 +24,60 @@
   }
 }
 
-// Processing (sphinx_uint64_t *) params
+// Processing (sphinx_uint64_t *) params.
 %typemap(in) sphinx_uint64_t * {
-  /* Get the length of the array */
-  int size = RARRAY_LEN($input);
-  int i;
+  int size = RARRAY_LEN($input), i;
+
   $1 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
-  /* Get the first element in memory */
   VALUE *ptr = RARRAY_PTR($input); 
   for (i = 0; i < size; i++, ptr++) {
-    /* Convert Ruby Object String to char* */
-    $1[i]= NUM2ULL(*ptr);
+    $1[i] = NUM2ULL(*ptr);
   }
 }
 
-// This cleans up the char (sphinx_uint64_t *) array created before 
-// the function call
+// Cleaning up (sphinx_uint64_t *) params.
 %typemap(freearg) sphinx_uint64_t * {
   free((char *) $1);
 }
 
-// Processing (int *) params
+// Processing (int *) params.
 %typemap(in) int * {
-  /* Get the length of the array */
-  int size = RARRAY_LEN($input);
-  int i;
+  int size = RARRAY_LEN($input), i;
+
   $1 = (int *) malloc(size * sizeof(int));
-  /* Get the first element in memory */
   VALUE *ptr = RARRAY_PTR($input);
   for (i = 0; i < size; i++, ptr++) {
-    /* Convert Ruby Object String to char* */
-    $1[i]= NUM2INT(*ptr);
+    $1[i] = NUM2INT(*ptr);
   }
 }
 
-// This cleans up the char (sphinx_uint64_t *) array created before 
-// the function call
+// Cleaning up (int *) params.
 %typemap(freearg) int * {
   free((char *) $1);
 }
 
-// Processing (char **) params
+// Processing (char **) params.
 %typemap(in) char ** {
-  /* Get the length of the array */
-  int size = RARRAY_LEN($input);
-  int i;
+  int size = RARRAY_LEN($input), i;
+
   $1 = (char **) malloc(size * sizeof(char *));
-  /* Get the first element in memory */
   VALUE *ptr = RARRAY_PTR($input);
   for (i = 0; i < size; i++, ptr++) {
-    /* Convert Ruby Object String to char* */
     $1[i] = STR2CSTR(*ptr);
   }
 }
 
-// This cleans up the char ** array created before 
-// the function call
+// Cleaning up (char **) params.
 %typemap(freearg) char ** {
   free((char *) $1);
 }
 
+/* -----------------------------------------------------------------------------
+ *  This section contains sphinx_result return value type mappings
+ *  (functions sphinx_query and sphinx_run_queries.)
+ * ----------------------------------------------------------------------------- */
+
+// Processing sphinx_run_queries return value (array of sphinx_result).
 %typemap(out) (sphinx_result *) {
   int num_results = sphinx_get_num_results(arg1), i;
 
@@ -90,12 +88,16 @@
 }
 sphinx_result * sphinx_run_queries(sphinx_client * client);
 
-// Sphinx search results
+// Processing sphinx_query return value (single instance of sphinx_result).
 %typemap(out) (sphinx_result *) {
   $result = convert_sphinx_result(arg1, $1);
-};
+}
 
-// Build excerpts arguments
+/* -----------------------------------------------------------------------------
+ *  This section contains type mappings for sphinx_build_excerpts function.
+ * ----------------------------------------------------------------------------- */
+
+// Processing sphinx_excerpt_options input parameter.
 %typemap(in) sphinx_excerpt_options * (sphinx_excerpt_options opts, VALUE val) {
   Check_Type($input, T_HASH);
   sphinx_init_excerpt_options(&opts);
@@ -162,6 +164,7 @@ sphinx_result * sphinx_run_queries(sphinx_client * client);
   $1 = &opts;
 }
 
+// Processing char ** output parameter.
 %typemap(out) char ** {
   int num_docs, i;
   
@@ -176,13 +179,20 @@ char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char *
 %typemap(in) sphinx_excerpt_options * {}
 %typemap(out) char ** {}
 
+/* -----------------------------------------------------------------------------
+ *  This section contains type mappings for sphinx_build_keywords function.
+ * ----------------------------------------------------------------------------- */
+
+// Defining out_num_keywords input parameter (will contain a number of keywords).
 %typemap(in, numinputs = 0) int * out_num_keywords (int out_num_keywords) {
   $1 = &out_num_keywords;
 }
 
+// Doing nothing because out_num_keywords is a local variable.
 %typemap(freearg) int * out_num_keywords {
 }
 
+// Processing array of sphinx_keyword_info values.
 %typemap(out) sphinx_keyword_info * {
   int i;
   VALUE keyword = Qnil;
@@ -196,6 +206,10 @@ char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char *
     rb_ary_store($result, i, keyword);
   }
 }
+
+/* -----------------------------------------------------------------------------
+ *  This section contains some useful helpers for type mappers.
+ * ----------------------------------------------------------------------------- */
 
 %{
 static VALUE convert_sphinx_result(sphinx_client *client, sphinx_result *input) {

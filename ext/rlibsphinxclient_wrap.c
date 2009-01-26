@@ -1987,14 +1987,11 @@ _wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (int)(val2);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[2]);
-    int i;
+    int size = RARRAY_LEN(argv[2]), i;
+    
     arg3 = (char **) malloc(size * sizeof(char *));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[2]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
       arg3[i] = STR2CSTR(*ptr);
     }
   }
@@ -2556,14 +2553,11 @@ _wrap_StSphinxResult_fields_set(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (sphinx_result *)(argp1);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[0]);
-    int i;
+    int size = RARRAY_LEN(argv[0]), i;
+    
     arg2 = (char **) malloc(size * sizeof(char *));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[0]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
       arg2[i] = STR2CSTR(*ptr);
     }
   }
@@ -2677,14 +2671,11 @@ _wrap_StSphinxResult_attr_names_set(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (sphinx_result *)(argp1);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[0]);
-    int i;
+    int size = RARRAY_LEN(argv[0]), i;
+    
     arg2 = (char **) malloc(size * sizeof(char *));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[0]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
       arg2[i] = STR2CSTR(*ptr);
     }
   }
@@ -2744,15 +2735,12 @@ _wrap_StSphinxResult_attr_types_set(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (sphinx_result *)(argp1);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[0]);
-    int i;
+    int size = RARRAY_LEN(argv[0]), i;
+    
     arg2 = (int *) malloc(size * sizeof(int));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[0]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg2[i]= NUM2INT(*ptr);
+      arg2[i] = NUM2INT(*ptr);
     }
   }
   if (arg1) (arg1)->attr_types = arg2;
@@ -4361,27 +4349,21 @@ _wrap_sphinx_set_field_weights(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (int)(val2);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[2]);
-    int i;
+    int size = RARRAY_LEN(argv[2]), i;
+    
     arg3 = (char **) malloc(size * sizeof(char *));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[2]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
       arg3[i] = STR2CSTR(*ptr);
     }
   }
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[3]);
-    int i;
+    int size = RARRAY_LEN(argv[3]), i;
+    
     arg4 = (int *) malloc(size * sizeof(int));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[3]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg4[i]= NUM2INT(*ptr);
+      arg4[i] = NUM2INT(*ptr);
     }
   }
   result = (sphinx_bool)sphinx_set_field_weights(arg1,arg2,(char const **)arg3,(int const *)arg4);
@@ -4431,27 +4413,21 @@ _wrap_sphinx_set_index_weights(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (int)(val2);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[2]);
-    int i;
+    int size = RARRAY_LEN(argv[2]), i;
+    
     arg3 = (char **) malloc(size * sizeof(char *));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[2]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
       arg3[i] = STR2CSTR(*ptr);
     }
   }
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[3]);
-    int i;
+    int size = RARRAY_LEN(argv[3]), i;
+    
     arg4 = (int *) malloc(size * sizeof(int));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[3]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg4[i]= NUM2INT(*ptr);
+      arg4[i] = NUM2INT(*ptr);
     }
   }
   result = (sphinx_bool)sphinx_set_index_weights(arg1,arg2,(char const **)arg3,(int const *)arg4);
@@ -4550,15 +4526,12 @@ _wrap_sphinx_add_filter(int argc, VALUE *argv, VALUE self) {
   } 
   arg3 = (int)(val3);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[3]);
-    int i;
+    int size = RARRAY_LEN(argv[3]), i;
+    
     arg4 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[3]); 
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg4[i]= NUM2ULL(*ptr);
+      arg4[i] = NUM2ULL(*ptr);
     }
   }
   {
@@ -5328,14 +5301,11 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
   } 
   arg3 = (int)(val3);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[3]);
-    int i;
+    int size = RARRAY_LEN(argv[3]), i;
+    
     arg4 = (char **) malloc(size * sizeof(char *));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[3]);
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
       arg4[i] = STR2CSTR(*ptr);
     }
   }
@@ -5345,27 +5315,21 @@ _wrap_sphinx_update_attributes(int argc, VALUE *argv, VALUE self) {
   } 
   arg5 = (int)(val5);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[5]);
-    int i;
+    int size = RARRAY_LEN(argv[5]), i;
+    
     arg6 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[5]); 
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg6[i]= NUM2ULL(*ptr);
+      arg6[i] = NUM2ULL(*ptr);
     }
   }
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[6]);
-    int i;
+    int size = RARRAY_LEN(argv[6]), i;
+    
     arg7 = (sphinx_uint64_t *) malloc(size * sizeof(sphinx_uint64_t));
-    /* Get the first element in memory */
     VALUE *ptr = RARRAY_PTR(argv[6]); 
     for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg7[i]= NUM2ULL(*ptr);
+      arg7[i] = NUM2ULL(*ptr);
     }
   }
   result = (int)sphinx_update_attributes(arg1,(char const *)arg2,arg3,(char const **)arg4,arg5,(unsigned long long const *)arg6,(unsigned long long const *)arg7);
