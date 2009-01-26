@@ -65,14 +65,13 @@
   /* Get the length of the array */
   int size = RARRAY_LEN($input);
   int i;
-  $1 = (char **) malloc((size + 1) * sizeof(char *));
+  $1 = (char **) malloc(size * sizeof(char *));
   /* Get the first element in memory */
   VALUE *ptr = RARRAY_PTR($input);
   for (i = 0; i < size; i++, ptr++) {
     /* Convert Ruby Object String to char* */
-    $1[i]= STR2CSTR(*ptr); 
+    $1[i] = STR2CSTR(*ptr);
   }
-  $1[i] = NULL; /* End of list */
 }
 
 // This cleans up the char ** array created before 
@@ -174,7 +173,8 @@ sphinx_result * sphinx_run_queries(sphinx_client * client);
   }
 }
 char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char ** docs, const char * index, const char * words, sphinx_excerpt_options * opts);
-%typemap(out) char **
+%typemap(in) sphinx_excerpt_options * {}
+%typemap(out) char ** {}
 
 %typemap(in, numinputs = 0) int * out_num_keywords (int out_num_keywords) {
   $1 = &out_num_keywords;
@@ -206,10 +206,13 @@ static VALUE convert_sphinx_result(sphinx_client *client, sphinx_result *input) 
     result = Qfalse;
   } else {
     result = rb_hash_new();
-    rb_hash_aset(result, rb_str_new2("status"), INT2FIX(input->status));
-    
     rb_hash_aset(result, rb_str_new2("error"), input->error ? rb_str_new2(input->error) : Qnil);
     rb_hash_aset(result, rb_str_new2("warning"), input->warning ? rb_str_new2(input->warning) : Qnil);
+    rb_hash_aset(result, rb_str_new2("status"), INT2FIX(input->status));
+    if (input->status != SEARCHD_OK && input->status != SEARCHD_WARNING) {
+      return result;
+    }
+    
     rb_hash_aset(result, rb_str_new2("total"), INT2FIX(input->total));
     rb_hash_aset(result, rb_str_new2("total_found"), INT2FIX(input->total_found));
     time = (char *) malloc(20);
@@ -274,7 +277,7 @@ static VALUE convert_sphinx_result(sphinx_client *client, sphinx_result *input) 
     }
     rb_hash_aset(result, rb_str_new2("matches"), var1);
   }
-
+  
   return result;
 }
 %}

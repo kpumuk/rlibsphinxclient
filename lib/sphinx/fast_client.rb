@@ -109,8 +109,6 @@ module Sphinx
     def RunQueries
       Lib.sphinx_run_queries(@sphinx)
     end
-
-    # int             sphinx_update_attributes    ( sphinx_client * client, const char * index, int num_attrs, const char ** attrs, int num_docs, const sphinx_uint64_t * docids, const sphinx_uint64_t * values );
     
     def BuildExcerpts(docs, index, words, opts = {})
       Lib.sphinx_build_excerpts(@sphinx, docs.size, docs, index, words, opts)

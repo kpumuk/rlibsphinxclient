@@ -123,17 +123,15 @@ end
 # To execute these tests you need to execute sphinx_test.sql and configure sphinx using sphinx.conf
 # (both files are placed under sphinx directory)
 describe 'The Sphinx::Client connected to Sphinx' do
-  before :each do
-    @sphinx = Sphinx::Client.new
-  end
+  before(:each) { @sphinx = Sphinx::Client.new }
+  after (:each) { @sphinx.destroy }
   
   it_should_behave_like 'client API library'
 end
 
 describe 'The Sphinx::FastClient connected to Sphinx' do
-  before :each do
-    @sphinx = Sphinx::FastClient.new
-  end
+  before(:each) { @sphinx = Sphinx::FastClient.new }
+  after (:each) { @sphinx.destroy }
   
   it_should_behave_like 'client API library'
 end
