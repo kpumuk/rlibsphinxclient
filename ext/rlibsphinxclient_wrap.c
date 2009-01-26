@@ -1749,24 +1749,24 @@ static VALUE convert_sphinx_result(sphinx_client *client, sphinx_result *input) 
     var1 = rb_ary_new();
     for (i = 0; i < input->num_matches; i++) {
       var2 = rb_hash_new();
-      rb_hash_aset(var2, rb_str_new2("id"), INT2FIX(sphinx_get_id(input, i)));
+      rb_hash_aset(var2, rb_str_new2("id"), ULL2NUM(sphinx_get_id(input, i)));
       rb_hash_aset(var2, rb_str_new2("weight"), INT2FIX(sphinx_get_weight(input, i)));
       
       var3 = rb_hash_new();
       for (j = 0; j < input->num_attrs; j++) {
         switch (input->attr_types[j]) {
           case SPH_ATTR_MULTI | SPH_ATTR_INTEGER:
-            mva = (unsigned int *)sphinx_get_mva(input, i, j);
+            mva = (unsigned int *) sphinx_get_mva(input, i, j);
             var4 = rb_ary_new();
             for (k = 0; k < (int) mva[0]; k++) {
-              rb_ary_store(var4, k, INT2FIX(mva[k + 1]));
+              rb_ary_store(var4, k, INT2NUM(mva[k + 1]));
             }
             break;
           case SPH_ATTR_FLOAT:
             var4 = rb_float_new(sphinx_get_float(input, i, j));
             break;
           default:
-            var4 = INT2NUM(sphinx_get_int(input, i, j));
+            var4 = ULL2NUM(sphinx_get_int(input, i, j));
             break;
         }
         rb_hash_aset(var3, rb_str_new2(input->attr_names[j]), var4);
