@@ -81,90 +81,23 @@
   free((char *) $1);
 }
 
+%typemap(out) (sphinx_result *) {
+  int num_results = sphinx_get_num_results(arg1), i;
+
+  $result = rb_ary_new();
+  for (i = 0; i < num_results; i++) {
+    rb_ary_store($result, i, convert_sphinx_result(arg1, $1 + i));
+  }
+}
+sphinx_result * sphinx_run_queries(sphinx_client * client);
+
 // Sphinx search results
 %typemap(out) (sphinx_result *) {
-  int i, j, k;
-  VALUE var1 = Qnil, var2 = Qnil, var3 = Qnil, var4 = Qnil;
-  unsigned int *mva = 0;
-  char *time = 0;
-  
-  if (!$1) {
-    $result = Qfalse;
-  } else {
-    $result = rb_hash_new();
-    rb_hash_aset($result, rb_str_new2("status"), INT2FIX($1->status));
-    
-    rb_hash_aset($result, rb_str_new2("error"), Qnil);
-    rb_hash_aset($result, rb_str_new2("warning"), $1->warning ? rb_str_new2($1->warning) : Qnil);
-    rb_hash_aset($result, rb_str_new2("total"), INT2FIX($1->total));
-    rb_hash_aset($result, rb_str_new2("total_found"), INT2FIX($1->total_found));
-    time = (char *) malloc(20);
-    sprintf(time, "%%.3f", $1->time_msec / 1000.);
-    rb_hash_aset($result, rb_str_new2("time"), rb_str_new2(time));
-    free(time);
-  
-    // fields
-    var1 = rb_ary_new();
-    for (i = 0; i < $1->num_fields; i++) {
-      rb_ary_store(var1, i, rb_str_new2($1->fields[i]));
-    }
-    rb_hash_aset($result, rb_str_new2("fields"), var1);
-  
-    // attrs
-    var1 = rb_hash_new();
-    for (i = 0; i < $1->num_attrs; i++) {
-      rb_hash_aset(var1, rb_str_new2($1->attr_names[i]), SWIG_From_int($1->attr_types[i]));    
-    }
-    rb_hash_aset($result, rb_str_new2("attrs"), var1);    
-  
-    // words
-    var1 = rb_hash_new();
-    for (i = 0; i < $1->num_words; i++) {
-      var2 = rb_hash_new();
-      rb_hash_aset(var2, rb_str_new2("docs"), INT2FIX($1->words[i].docs));
-      rb_hash_aset(var2, rb_str_new2("hits"), INT2FIX($1->words[i].hits));
-  
-      rb_hash_aset(var1, rb_str_new2($1->words[i].word), var2);
-    }
-    rb_hash_aset($result, rb_str_new2("words"), var1);
-
-    // matches
-    var1 = rb_ary_new();
-    for (i = 0; i < $1->num_matches; i++) {
-      var2 = rb_hash_new();
-      rb_hash_aset(var2, rb_str_new2("id"), INT2FIX(sphinx_get_id($1, i)));
-      rb_hash_aset(var2, rb_str_new2("weight"), INT2FIX(sphinx_get_weight($1, i)));
-      
-      var3 = rb_hash_new();
-      for (j = 0; j < $1->num_attrs; j++) {
-        switch ($1->attr_types[j]) {
-          case SPH_ATTR_MULTI | SPH_ATTR_INTEGER:
-            mva = (unsigned int *)sphinx_get_mva($1, i, j);
-            var4 = rb_ary_new();
-            for (k = 0; k < (int) mva[0]; k++) {
-              rb_ary_store(var4, k, INT2FIX(mva[k + 1]));
-            }
-            break;
-          case SPH_ATTR_FLOAT:
-            var4 = SWIG_From_float(sphinx_get_float($1, i, j));
-            break;
-          default:
-            var4 = SWIG_From_int(sphinx_get_int($1, i, j));
-            break;
-        }
-        rb_hash_aset(var3, rb_str_new2($1->attr_names[j]), var4);
-      }
-      rb_hash_aset(var2, rb_str_new2("attrs"), var3);
-      
-      rb_ary_store(var1, i, var2);
-    }
-    rb_hash_aset($result, rb_str_new2("matches"), var1);
-  }
+  $result = convert_sphinx_result(arg1, $1);
 };
 
 // Build excerpts arguments
-%typemap(in) sphinx_excerpt_options *
-  (sphinx_excerpt_options opts, VALUE val) {
+%typemap(in) sphinx_excerpt_options * (sphinx_excerpt_options opts, VALUE val) {
   Check_Type($input, T_HASH);
   sphinx_init_excerpt_options(&opts);
   
@@ -251,7 +184,6 @@ char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char *
   int i;
   VALUE keyword = Qnil;
   $result = rb_ary_new();
-  printf("%d", out_num_keywords5);
   for (i = 0; i < out_num_keywords5; i++) {
     keyword = rb_hash_new();
     rb_hash_aset(keyword, rb_str_new2("tokenized"), rb_str_new2($1[i].tokenized));
@@ -261,5 +193,90 @@ char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char *
     rb_ary_store($result, i, keyword);
   }
 }
+
+%{
+static VALUE convert_sphinx_result(sphinx_client *client, sphinx_result *input) {
+  int i, j, k;
+  VALUE result = Qnil, var1 = Qnil, var2 = Qnil, var3 = Qnil, var4 = Qnil;
+  char *msg = (char *) 0;
+  unsigned int *mva = 0;
+  char *time = 0;
+  
+  if (!input) {
+    result = Qfalse;
+  } else {
+    result = rb_hash_new();
+    rb_hash_aset(result, rb_str_new2("status"), INT2FIX(input->status));
+    
+    rb_hash_aset(result, rb_str_new2("error"), input->error ? rb_str_new2(input->error) : Qnil);
+    rb_hash_aset(result, rb_str_new2("warning"), input->warning ? rb_str_new2(input->warning) : Qnil);
+    rb_hash_aset(result, rb_str_new2("total"), INT2FIX(input->total));
+    rb_hash_aset(result, rb_str_new2("total_found"), INT2FIX(input->total_found));
+    time = (char *) malloc(20);
+    sprintf(time, "%.3f", input->time_msec / 1000.);
+    rb_hash_aset(result, rb_str_new2("time"), rb_str_new2(time));
+    free(time);
+  
+    // fields
+    var1 = rb_ary_new();
+    for (i = 0; i < input->num_fields; i++) {
+      rb_ary_store(var1, i, rb_str_new2(input->fields[i]));
+    }
+    rb_hash_aset(result, rb_str_new2("fields"), var1);
+  
+    // attrs
+    var1 = rb_hash_new();
+    for (i = 0; i < input->num_attrs; i++) {
+      rb_hash_aset(var1, rb_str_new2(input->attr_names[i]), INT2NUM(input->attr_types[i]));    
+    }
+    rb_hash_aset(result, rb_str_new2("attrs"), var1);    
+  
+    // words
+    var1 = rb_hash_new();
+    for (i = 0; i < input->num_words; i++) {
+      var2 = rb_hash_new();
+      rb_hash_aset(var2, rb_str_new2("docs"), INT2FIX(input->words[i].docs));
+      rb_hash_aset(var2, rb_str_new2("hits"), INT2FIX(input->words[i].hits));
+  
+      rb_hash_aset(var1, rb_str_new2(input->words[i].word), var2);
+    }
+    rb_hash_aset(result, rb_str_new2("words"), var1);
+
+    // matches
+    var1 = rb_ary_new();
+    for (i = 0; i < input->num_matches; i++) {
+      var2 = rb_hash_new();
+      rb_hash_aset(var2, rb_str_new2("id"), INT2FIX(sphinx_get_id(input, i)));
+      rb_hash_aset(var2, rb_str_new2("weight"), INT2FIX(sphinx_get_weight(input, i)));
+      
+      var3 = rb_hash_new();
+      for (j = 0; j < input->num_attrs; j++) {
+        switch (input->attr_types[j]) {
+          case SPH_ATTR_MULTI | SPH_ATTR_INTEGER:
+            mva = (unsigned int *)sphinx_get_mva(input, i, j);
+            var4 = rb_ary_new();
+            for (k = 0; k < (int) mva[0]; k++) {
+              rb_ary_store(var4, k, INT2FIX(mva[k + 1]));
+            }
+            break;
+          case SPH_ATTR_FLOAT:
+            var4 = rb_float_new(sphinx_get_float(input, i, j));
+            break;
+          default:
+            var4 = INT2NUM(sphinx_get_int(input, i, j));
+            break;
+        }
+        rb_hash_aset(var3, rb_str_new2(input->attr_names[j]), var4);
+      }
+      rb_hash_aset(var2, rb_str_new2("attrs"), var3);
+      
+      rb_ary_store(var1, i, var2);
+    }
+    rb_hash_aset(result, rb_str_new2("matches"), var1);
+  }
+
+  return result;
+}
+%}
 
 %include "/opt/sphinx-0.9.9/include/sphinxclient.h"
