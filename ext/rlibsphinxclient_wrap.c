@@ -6708,10 +6708,14 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
+  int out_num_keywords5 ;
   VALUE vresult = Qnil;
   
-  if ((argc < 5) || (argc > 5)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 5)",argc); SWIG_fail;
+  {
+    arg5 = &out_num_keywords5;
+  }
+  if ((argc < 4) || (argc > 4)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 4)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_st_sphinx_client, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -6739,20 +6743,21 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
       break;
     }
   }
+  result = (sphinx_keyword_info *)sphinx_build_keywords(arg1,(char const *)arg2,(char const *)arg3,arg4,arg5);
   {
-    /* Get the length of the array */
-    int size = RARRAY_LEN(argv[4]);
     int i;
-    arg5 = (int *) malloc(size * sizeof(int));
-    /* Get the first element in memory */
-    VALUE *ptr = RARRAY_PTR(argv[4]);
-    for (i = 0; i < size; i++, ptr++) {
-      /* Convert Ruby Object String to char* */
-      arg5[i]= NUM2INT(*ptr);
+    VALUE keyword = Qnil;
+    vresult = rb_ary_new();
+    printf("%d", out_num_keywords5);
+    for (i = 0; i < out_num_keywords5; i++) {
+      keyword = rb_hash_new();
+      rb_hash_aset(keyword, rb_str_new2("tokenized"), rb_str_new2(result[i].tokenized));
+      rb_hash_aset(keyword, rb_str_new2("normalized"), rb_str_new2(result[i].normalized));
+      rb_hash_aset(keyword, rb_str_new2("docs"), INT2FIX(result[i].num_docs));
+      rb_hash_aset(keyword, rb_str_new2("hits"), INT2FIX(result[i].num_hits));
+      rb_ary_store(vresult, i, keyword);
     }
   }
-  result = (sphinx_keyword_info *)sphinx_build_keywords(arg1,(char const *)arg2,(char const *)arg3,arg4,arg5);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_st_sphinx_keyword_info, 0 |  0 );
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
   {

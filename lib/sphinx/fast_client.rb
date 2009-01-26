@@ -126,6 +126,7 @@ module Sphinx
     end
     
     def UpdateAttributes(index, attrs, values, mva = false)
+      # Lib.sphinx_update_attributes(@sphinx, index, attrs.size, attrs, values.size, values.keys, values.values)
     end
   end
 end

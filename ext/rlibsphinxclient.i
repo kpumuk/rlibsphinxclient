@@ -243,4 +243,23 @@
 char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char ** docs, const char * index, const char * words, sphinx_excerpt_options * opts);
 %typemap(out) char **
 
+%typemap(in, numinputs = 0) int * out_num_keywords (int out_num_keywords) {
+  $1 = &out_num_keywords;
+}
+
+%typemap(out) sphinx_keyword_info * {
+  int i;
+  VALUE keyword = Qnil;
+  $result = rb_ary_new();
+  printf("%d", out_num_keywords5);
+  for (i = 0; i < out_num_keywords5; i++) {
+    keyword = rb_hash_new();
+    rb_hash_aset(keyword, rb_str_new2("tokenized"), rb_str_new2($1[i].tokenized));
+    rb_hash_aset(keyword, rb_str_new2("normalized"), rb_str_new2($1[i].normalized));
+    rb_hash_aset(keyword, rb_str_new2("docs"), INT2FIX($1[i].num_docs));
+    rb_hash_aset(keyword, rb_str_new2("hits"), INT2FIX($1[i].num_hits));
+    rb_ary_store($result, i, keyword);
+  }
+}
+
 %include "/opt/sphinx-0.9.9/include/sphinxclient.h"
