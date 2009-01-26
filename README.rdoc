@@ -1,27 +1,62 @@
-require 'sphinx'
-sphinx = Sphinx::FastClient.new
-sphinx.SetServer('localhost', 3312)
-sphinx.SetConnectionTimeout(0)
-sphinx.SetLimits(0, 20, 1000, 0)
-sphinx.SetMaxQueryTime(0)
-sphinx.SetMatchMode(:extended2)
-sphinx.SetRankingMode(:bm25)
-sphinx.SetSortMode(:relevance, '')
-sphinx.Query('test')
+    require 'sphinx'
+    sphinx = Sphinx::FastClient.new
+    sphinx.SetServer('localhost', 3312)
+    sphinx.SetConnectionTimeout(0)
+    sphinx.SetLimits(0, 20, 1000, 0)
+    sphinx.SetMaxQueryTime(0)
+    sphinx.SetMatchMode(:extended2)
+    sphinx.SetRankingMode(:bm25)
+    sphinx.SetSortMode(:relevance, '')
+    sphinx.Query('test')
 
-require 'sphinx'
-sphinx = Sphinx::FastClient.new
-sphinx.Query('test hello')
-sphinx = nil
-GC.start
+    require 'sphinx'
+    sphinx = Sphinx::FastClient.new
+    sphinx.Query('test hello')
+    sphinx = nil
+    GC.start
 
-require 'sphinx'
-require 'benchmark'
-sphinx = Sphinx::FastClient.new
-puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
+    require 'sphinx'
+    require 'benchmark'
+    sphinx = Sphinx::FastClient.new
+    puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
 
-sphinx = Sphinx::Client.new
-puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
+    sphinx = Sphinx::Client.new
+    puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
 
-require 'sphinx'
-1000.times { sphinx = Sphinx::FastClient.new; sphinx.Query('test hello'); sphinx.free }
+    require 'sphinx'
+    1000.times { sphinx = Sphinx::FastClient.new; sphinx.Query('test hello'); sphinx.free }
+
+    100000.times do
+      @sphinx = Sphinx::FastClient.new
+      @sphinx.SetServer('localhost', 3312)
+      @sphinx.SetLimits(1, 100, 20, 30)
+      @sphinx.SetMaxQueryTime(5)
+      @sphinx.SetMatchMode(Sphinx::Client::SPH_MATCH_EXTENDED2)
+      @sphinx.SetRankingMode(Sphinx::Client::SPH_RANK_BM25)
+      @sphinx.SetSortMode(Sphinx::Client::SPH_SORT_RELEVANCE)
+      @sphinx.SetFieldWeights('group_id' => 10, 'rating' => 20)
+      @sphinx.SetIndexWeights('test1' => 20, 'test2' => 30)
+      @sphinx.SetIDRange(1, 100)
+      @sphinx.SetFilter('group_id', [1], true)
+      @sphinx.SetFilterRange('group_id', 1, 2, true)
+      @sphinx.SetFilterFloatRange('rating', 1, 3, true)
+      @sphinx.SetGroupBy('created_at', Sphinx::Client::SPH_GROUPBY_DAY)
+      @sphinx.SetGroupDistinct('group_id')
+      @sphinx.SetRetries(5, 10)
+      result = @sphinx.Query('wifi', 'test1')
+      @sphinx.destroy
+    end
+    
+    require 'sphinx'
+    100000.times do |i|
+      @sphinx = Sphinx::FastClient.new
+      puts i.to_s + ': ' + @sphinx.BuildKeywords('wifi gprs', 'test1', true).inspect
+      @sphinx.destroy
+    end
+
+    require 'sphinx'
+    100000.times do |i|
+      @sphinx = Sphinx::FastClient.new
+      puts i.to_s + ': ' + @sphinx.BuildExcerpts(['what the world', 'London is the capital of Great Britain'], 'test1', 'the').inspect
+      @sphinx.destroy
+    end

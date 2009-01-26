@@ -2076,9 +2076,16 @@ _wrap_sphinx_build_excerpts(int argc, VALUE *argv, VALUE self) {
     
     SWIG_AsVal_int(argv[1], &num_docs);
     
-    vresult = rb_ary_new();
-    for (i = 0; i < num_docs; i++) {
-      rb_ary_store(vresult, i, rb_str_new2(result[i]));
+    if (result) {
+      vresult = rb_ary_new();
+      for (i = 0; i < num_docs; i++) {
+        rb_ary_store(vresult, i, rb_str_new2(result[i]));
+        
+        free((char *) result[i]);
+      }
+      free((char *) result);
+    } else {
+      vresult = Qfalse;
     }
   }
   {
@@ -5423,7 +5430,12 @@ _wrap_sphinx_build_keywords(int argc, VALUE *argv, VALUE self) {
       rb_hash_aset(keyword, rb_str_new2("docs"), INT2FIX(result[i].num_docs));
       rb_hash_aset(keyword, rb_str_new2("hits"), INT2FIX(result[i].num_hits));
       rb_ary_store(vresult, i, keyword);
+      
+      free((char *) result[i].tokenized);
+      free((char *) result[i].normalized);
     }
+    
+    free((char *) result);
   }
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);

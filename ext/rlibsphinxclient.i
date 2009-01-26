@@ -170,9 +170,16 @@ sphinx_result * sphinx_run_queries(sphinx_client * client);
   
   SWIG_AsVal_int(argv[1], &num_docs);
   
-  $result = rb_ary_new();
-  for (i = 0; i < num_docs; i++) {
-    rb_ary_store($result, i, rb_str_new2($1[i]));
+  if ($1) {
+    $result = rb_ary_new();
+    for (i = 0; i < num_docs; i++) {
+      rb_ary_store($result, i, rb_str_new2($1[i]));
+    
+      free((char *) $1[i]);
+    }
+    free((char *) $1);
+  } else {
+    $result = Qfalse;
   }
 }
 char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char ** docs, const char * index, const char * words, sphinx_excerpt_options * opts);
@@ -204,7 +211,12 @@ char ** sphinx_build_excerpts(sphinx_client * client, int num_docs, const char *
     rb_hash_aset(keyword, rb_str_new2("docs"), INT2FIX($1[i].num_docs));
     rb_hash_aset(keyword, rb_str_new2("hits"), INT2FIX($1[i].num_hits));
     rb_ary_store($result, i, keyword);
+    
+    free((char *) $1[i].tokenized);
+    free((char *) $1[i].normalized);
   }
+  
+  free((char *) $1);
 }
 
 /* -----------------------------------------------------------------------------
