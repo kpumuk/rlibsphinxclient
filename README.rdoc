@@ -8,44 +8,46 @@ so use it at your own risk.
 This gem can be more difficult to install than the typical Ruby extension. First you have to
 install Sphinx and Sphinx pure C searchd client API library.
 
-=== Step 1: Install Sphinx and client API
+=== Step 1: Install pure C Sphinx client API
 
 Go to http://sphinxsearch.com/downloads.html and download the latest stable release.
-Install it to your preferred folder (I like /opt/sphinx):
+Then go to <tt>api/libsphinxclient</tt> directory and install client API to your
+preferred folder (I like /opt/sphinx):
 
-    ./configure --prefix=/opt/sphinx
-    make
-    sudo make install
+  cd api/libsphinxclient
+  ./configure --prefix=/opt/sphinx
+  make
+  sudo make install
 
-Then go to <tt>api/libsphinxclient</tt> directory and install client API library to the same
-folder:
+On Max OS X you may get the following error:
 
-    cd api/libsphinxclient
-    ./configure --prefix=/opt/sphinx
-    make
-    sudo make install
-
-On Max OS X you may get following error:
-
-    configure: error: C++ preprocessor "/lib/cpp" fails sanity check
+  configure: error: C++ preprocessor "/lib/cpp" fails sanity check
 
 In this case you should specify environment variable for <tt>./configure</tt> script:
 
-    CXXCPP="gcc -E" ./configure --prefix=/opt/sphinx
+  CXXCPP="gcc -E" ./configure --prefix=/opt/sphinx
 
 === Step 2: Install rlibsphinxclient gem
 
 If you have installed the Sphinx to <tt>/opt/sphinx</tt>, just run:
 
-    sudo gem install rlibsphinxclient --no-ri --no-rdoc
+  sudo gem install kpumuk-rlibsphinxclient --no-ri --no-rdoc
 
 Otherwise, specify where sphinx has been installed to:
 
-    sudo gem install rlibsphinxclient --no-ri --no-rdoc -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
+  sudo gem install kpumuk-rlibsphinxclient --no-ri --no-rdoc -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
 
-On Mac OS X you should specify <tt>ARCHFLAGS</tt> environment variable:
+On Mac OS X with MacPorts you should specify <tt>ARCHFLAGS</tt> environment variable:
 
-    env ARCHFLAGS="-arch i386" sudo gem install rlibsphinxclient --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
+  sudo env ARCHFLAGS="-arch i386" gem install kpumuk-rlibsphinxclient --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
+
+If you are working on Ruby on Rails application, you can add gem dependency to your
+<tt>config/environment.rb</tt>:
+
+  config.gem 'kpumuk-rlibsphinxclient', :lib => 'sphinx'
+
+Also don't forget to remove the <tt>sphinx</tt> plugin, because it's functionality
+is completely covered by this gem.
 
 == Using the rlibsphinxclient gem
 

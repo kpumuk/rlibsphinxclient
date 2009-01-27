@@ -9,7 +9,8 @@ Echoe.new('rlibsphinxclient') do |p|
   p.email = 'kpumuk@kpumuk.info'
   p.summary = 'A Ruby wrapper for pure C searchd client API library'
   p.url = 'http://github.com/kpumuk/rlibsphinxclient'
-  p.version = '0.2.0'
+  p.version = '0.2.1'
+  p.ignore_pattern = 'rdoc/**/*'
 end
 
 desc 'Update SWIG wrapper for pure C searchd client API library'
@@ -22,7 +23,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'rlibsphinxclient'
   rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README.rdoc', 'CHANGELOG', 'LICENSE')
+  rdoc.rdoc_files.include('README.rdoc', 'CHANGELOG.rdoc', 'LICENSE')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 

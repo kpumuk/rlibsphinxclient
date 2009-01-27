@@ -1,0 +1,14 @@
+=== Version 0.2.1 / 2009-01-27
+
+* 4 minor bug fixes
+
+  * Fixed extconf.rb to use /opt/sphinx as default library search path.
+  * Updated Mac OS X installation steps and prerequisites section in README.rdoc.
+  * Updated Manifest to include LICENSE file.
+  * Added CHANGELOG file.
+
+=== Version 0.2.0 / 2009-01-27
+
+This is the first preview release of rsphinxclientapi, a Ruby wrapper for pure C searchd client API library.
+
+* Implemented wrappers for all API functions.

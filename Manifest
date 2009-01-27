@@ -1,4 +1,4 @@
-CHANGELOG
+CHANGELOG.rdoc
 ext/extconf.rb
 ext/rlibsphinxclient.i
 ext/rlibsphinxclient_wrap.c
@@ -10,9 +10,11 @@ lib/sphinx/response.rb
 lib/sphinx/safe_executor.rb
 lib/sphinx/timeout.rb
 lib/sphinx.rb
+LICENSE
 Manifest
 Rakefile
 README.rdoc
+rlibsphinxclient.gemspec
 spec/client_response_spec.rb
 spec/client_spec.rb
 spec/fixtures/default_search.php

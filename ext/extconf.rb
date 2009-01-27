@@ -9,11 +9,11 @@ else
   $CFLAGS << " -O3"
 end
 
-find_library(*['sphinxclient', 'sphinx_create', '/opt/sphinx'].compact) or
+find_library(*['sphinxclient', 'sphinx_create', '/opt/sphinx/lib'].compact) or
 find_library(*['sphinxclient', 'sphinx_create', dir_config('libsphinxclient').last].compact) or
   raise "shared library 'libsphinxclient' not found"
 
-find_header(*['sphinxclient.h', '/opt/sphinx'].compact) or
+find_header(*['sphinxclient.h', '/opt/sphinx/include'].compact) or
 find_header(*['sphinxclient.h', dir_config('libsphinxclient').first].compact) or
   raise "header file 'sphinxclient.h' not found"
 
