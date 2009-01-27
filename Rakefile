@@ -9,20 +9,12 @@ Echoe.new('rlibsphinxclient') do |p|
   p.email = 'kpumuk@kpumuk.info'
   p.summary = 'A Ruby wrapper for pure C searchd client API library'
   p.url = 'http://github.com/kpumuk/rlibsphinxclient'
-  p.version = '0.1.0'
+  p.version = '0.2.0'
 end
 
 desc 'Update SWIG wrapper for pure C searchd client API library'
 task :swig do
   system 'cd ext && swig -I/opt/local/include -I/opt/sphinx-0.9.9/include -ruby -autorename rlibsphinxclient.i'
-end
-
-desc 'Test the rlibsphinxclient plugin.'
-Spec::Rake::SpecTask.new(:spec) do |t|
-  t.libs << 'lib'
-  t.pattern = 'spec/**/*_spec.rb'
-  t.verbose = true
-  t.spec_opts = ['-cfs']
 end
 
 desc 'Generate documentation for the rlibsphinxclient gem.'
