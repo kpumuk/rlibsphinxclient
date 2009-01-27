@@ -1,62 +1,149 @@
-    require 'sphinx'
-    sphinx = Sphinx::FastClient.new
-    sphinx.SetServer('localhost', 3312)
-    sphinx.SetConnectionTimeout(0)
-    sphinx.SetLimits(0, 20, 1000, 0)
-    sphinx.SetMaxQueryTime(0)
-    sphinx.SetMatchMode(:extended2)
-    sphinx.SetRankingMode(:bm25)
-    sphinx.SetSortMode(:relevance, '')
-    sphinx.Query('test')
+= rlibsphinxclient
+
+A Ruby wrapper for pure C searchd client API library. This is *highly experimental* library
+so use it at your own risk.
+
+== Installing the rlibsphinxclient gem
+
+This gem can be more difficult to install than the typical Ruby extension. First you have to
+install Sphinx and Sphinx pure C searchd client API library.
+
+=== Step 1: Install Sphinx and client API
+
+Go to http://sphinxsearch.com/downloads.html and download the latest stable release.
+Install it to your preferred folder (I like /opt/sphinx):
+
+    ./configure --prefix=/opt/sphinx
+    make
+    sudo make install
+
+Then go to <tt>api/libsphinxclient</tt> directory and install client API library to the same
+folder:
+
+    cd api/libsphinxclient
+    ./configure --prefix=/opt/sphinx
+    make
+    sudo make install
+
+On Max OS X you may get following error:
+
+    configure: error: C++ preprocessor "/lib/cpp" fails sanity check
+
+In this case you should specify environment variable for <tt>./configure</tt> script:
+
+    CXXCPP="gcc -E" ./configure --prefix=/opt/sphinx
+
+=== Step 2: Install rlibsphinxclient gem
+
+If you have installed the Sphinx to <tt>/opt/sphinx</tt>, just run:
+
+    sudo gem install rlibsphinxclient --no-ri --no-rdoc
+
+Otherwise, specify where sphinx has been installed to:
+
+    sudo gem install rlibsphinxclient --no-ri --no-rdoc -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
+
+On Mac OS X you should specify <tt>ARCH</tt> environment variable:
+
+    env sudo gem install rlibsphinxclient --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
+
+== Using the rlibsphinxclient gem
+
+The gem includes two versions of the client API: pure Ruby and wrapper for pure C client API.
+They are 100% equivalent in use, so you can switch to any of them. To use pure Ruby client,
+instantiate the <tt>Sphinx::Client</tt>, for pure C wrapper use <tt>Sphinx::FastClient</tt>.
+
+Important note: you should call <tt>destroy</tt> method when you do not need client API any more.
+The reason for that is the C wrapper saves all query results in memory, and frees them in
+the <tt>destroy</tt> method call. You can omit this call in pure Ruby library, but I'd like
+to do call in any case just for consistence (to be able to switch to another client).
+
+Important note #2: to ensure that <tt>destroy</tt> method will be called, use <tt>ensure</tt>
+block:
+
+    begin
+      @sphinx = Sphinx::FastClient.new
+      @sphinx.Query('test')
+    ensure
+      @sphinx.destroy
+    end
+
+== Examples of usage
+
+Ok, let's take a look at the examples. First, here is the search example with all possible
+filters and options set:
 
     require 'sphinx'
-    sphinx = Sphinx::FastClient.new
-    sphinx.Query('test hello')
-    sphinx = nil
-    GC.start
+    @sphinx = Sphinx::FastClient.new
+    @sphinx.SetServer('localhost', 3312)
+    @sphinx.SetLimits(1, 100, 20, 30)
+    @sphinx.SetMaxQueryTime(5)
+    @sphinx.SetMatchMode(Sphinx::Client::SPH_MATCH_EXTENDED2)
+    @sphinx.SetRankingMode(Sphinx::Client::SPH_RANK_BM25)
+    @sphinx.SetSortMode(Sphinx::Client::SPH_SORT_RELEVANCE)
+    @sphinx.SetFieldWeights('group_id' => 10, 'rating' => 20)
+    @sphinx.SetIndexWeights('test1' => 20, 'test2' => 30)
+    @sphinx.SetIDRange(1, 100)
+    @sphinx.SetFilter('group_id', [1], true)
+    @sphinx.SetFilterRange('group_id', 1, 2, true)
+    @sphinx.SetFilterFloatRange('rating', 1, 3, true)
+    @sphinx.SetGroupBy('created_at', Sphinx::Client::SPH_GROUPBY_DAY)
+    @sphinx.SetGroupDistinct('group_id')
+    @sphinx.SetRetries(5, 10)
+    results = @sphinx.Query('test')
+    @sphinx.destroy
+
+<tt>BuildKeywords</tt> example:
+
+    require 'sphinx'
+    @sphinx = Sphinx::FastClient.new
+    results = @sphinx.BuildKeywords('wifi gprs', 'test1', true)
+    @sphinx.destroy
+
+<tt>BuildExcerpts</tt> example:
+
+    require 'sphinx'
+    @sphinx = Sphinx::FastClient.new
+    results = @sphinx.BuildExcerpts(['what the world', 'London is the capital of Great Britain'], 'test1', 'the')
+    @sphinx.destroy
+
+<tt>UpdateAttributes</tt> example:
+
+    require 'sphinx'
+    @sphinx = Sphinx::FastClient.new
+    results = @sphinx.UpdateAttributes('test1', ['group_id'], { 2 => [1] })
+    @sphinx.destroy
+
+== Benchmarks
+
+The reason to write this gem was to investigate why we keep getting timeout errors
+when using Sphinx (occur rarely, but they are annoying me.) But the side effect of
+this library was the slight search performance improvement: Ruby library is slower
+when generating Sphinx request and parsing its results.
 
     require 'sphinx'
     require 'benchmark'
-    sphinx = Sphinx::FastClient.new
-    puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
-
-    sphinx = Sphinx::Client.new
-    puts Benchmark.measure { 1000.times { sphinx.Query('test hello') } }
-
-    require 'sphinx'
-    1000.times { sphinx = Sphinx::FastClient.new; sphinx.Query('test hello'); sphinx.free }
-
-    100000.times do
-      @sphinx = Sphinx::FastClient.new
-      @sphinx.SetServer('localhost', 3312)
-      @sphinx.SetLimits(1, 100, 20, 30)
-      @sphinx.SetMaxQueryTime(5)
-      @sphinx.SetMatchMode(Sphinx::Client::SPH_MATCH_EXTENDED2)
-      @sphinx.SetRankingMode(Sphinx::Client::SPH_RANK_BM25)
-      @sphinx.SetSortMode(Sphinx::Client::SPH_SORT_RELEVANCE)
-      @sphinx.SetFieldWeights('group_id' => 10, 'rating' => 20)
-      @sphinx.SetIndexWeights('test1' => 20, 'test2' => 30)
-      @sphinx.SetIDRange(1, 100)
-      @sphinx.SetFilter('group_id', [1], true)
-      @sphinx.SetFilterRange('group_id', 1, 2, true)
-      @sphinx.SetFilterFloatRange('rating', 1, 3, true)
-      @sphinx.SetGroupBy('created_at', Sphinx::Client::SPH_GROUPBY_DAY)
-      @sphinx.SetGroupDistinct('group_id')
-      @sphinx.SetRetries(5, 10)
-      result = @sphinx.Query('wifi', 'test1')
-      @sphinx.destroy
+    
+    def run_test(klass)
+      sphinx = klass.new
+      sphinx.Query('test hello')
+    ensure
+      sphinx.destroy
     end
     
-    require 'sphinx'
-    100000.times do |i|
-      @sphinx = Sphinx::FastClient.new
-      puts i.to_s + ': ' + @sphinx.BuildKeywords('wifi gprs', 'test1', true).inspect
-      @sphinx.destroy
+    Benchmark.bm do |x|
+      x.report('pure ruby') { 1000.times { run_test(Sphinx::Client) } }
+      x.report('c wrapper') { 1000.times { run_test(Sphinx::FastClient) } }
     end
 
-    require 'sphinx'
-    100000.times do |i|
-      @sphinx = Sphinx::FastClient.new
-      puts i.to_s + ': ' + @sphinx.BuildExcerpts(['what the world', 'London is the capital of Great Britain'], 'test1', 'the').inspect
-      @sphinx.destroy
-    end
+On my MBP I got the following results:
+
+               user       system     total    real
+    pure ruby  0.420000   0.230000   0.650000 ( 14.721659)
+    c wrapper  0.060000   0.090000   0.150000 (  2.248645)
+
+== Who are the authors?
+
+This plugin has been created in Scribd.com for our internal use and then the sources were opened 
+for other people to use. All the code in this package has been developed by Dmytro Shteflyuk
+for Scribd.com and is released under the GPLv2 license. For more details, see LICENSE file.
