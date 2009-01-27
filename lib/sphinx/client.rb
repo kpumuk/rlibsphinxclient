@@ -1,28 +1,31 @@
-# = client.rb - Sphinx Client API
+# = client.rb - Pure Ruby Sphinx client API
 # 
 # Author::    Dmytro Shteflyuk <mailto:kpumuk@kpumuk.info>.
-# Copyright:: Copyright (c) 2006 - 2008 Dmytro Shteflyuk
-# License::   Distributes under the same terms as Ruby
-# Version::   0.4.0-r1112
+# Copyright:: Copyright (c) 2006 - 2009 Dmytro Shteflyuk
+# License::   Distributes under the GPLv2 license.
+# Version::   0.2.0
 # Website::   http://kpumuk.info/projects/ror-plugins/sphinx
 #
-# This library is distributed under the terms of the Ruby license.
-# You can freely distribute/modify this library.
+# This library is distributed under the terms of the GPLv2 license.
 
-# ==Sphinx Client API
+# == Sphinx Client API
 # 
 # The Sphinx Client API is used to communicate with <tt>searchd</tt>
 # daemon and get search results from Sphinx.
 # 
-# ===Usage
+# === Usage
 # 
-#   sphinx = Sphinx::Client.new
-#   result = sphinx.Query('test')
-#   ids = result['matches'].map { |match| match['id'] }.join(',')
-#   posts = Post.find :all, :conditions => "id IN (#{ids})"
+#   begin
+#     sphinx = Sphinx::Client.new
+#     result = sphinx.Query('test')
+#     ids = result['matches'].map { |match| match['id'] }.join(',')
+#     posts = Post.find :all, :conditions => "id IN (#{ids})"
 #   
-#   docs = posts.map(&:body)
-#   excerpts = sphinx.BuildExcerpts(docs, 'index', 'test')
+#     docs = posts.map(&:body)
+#     excerpts = sphinx.BuildExcerpts(docs, 'index', 'test')
+#   ensure
+#     sphinx.destroy
+#   end
 
 require 'socket'
 
@@ -40,6 +43,7 @@ module Sphinx
 
   # :startdoc:
 
+  # A pure Ruby Sphinx client API.
   class Client
   
     # :stopdoc:

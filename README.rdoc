@@ -43,9 +43,9 @@ Otherwise, specify where sphinx has been installed to:
 
     sudo gem install rlibsphinxclient --no-ri --no-rdoc -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
 
-On Mac OS X you should specify <tt>ARCH</tt> environment variable:
+On Mac OS X you should specify <tt>ARCHFLAGS</tt> environment variable:
 
-    env sudo gem install rlibsphinxclient --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
+    env ARCHFLAGS="-arch i386" sudo gem install rlibsphinxclient --no-rdoc --no-ri -- --with-libsphinxclient-dir=/opt/sphinx-0.9.9
 
 == Using the rlibsphinxclient gem
 
