@@ -1,16 +1,21 @@
 require 'rubygems'
 require 'rake'
-require 'echoe'
 require 'spec/rake/spectask'
 require 'rake/rdoctask'
 
-Echoe.new('rlibsphinxclient') do |p|
-  p.author = 'Dmytro Shteflyuk'
-  p.email = 'kpumuk@kpumuk.info'
-  p.summary = 'A Ruby wrapper for pure C searchd client API library'
-  p.url = 'http://github.com/kpumuk/rlibsphinxclient'
-  p.version = '0.2.1'
-  p.ignore_pattern = 'rdoc/**/*'
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gemspec|
+    gemspec.name           = 'rlibsphinxclient'
+    gemspec.summary        = 'A Ruby wrapper for pure C searchd client API library.'
+    gemspec.email          = 'kpumuk@kpumuk.info'
+    gemspec.homepage       = 'http://github.com/kpumuk/rlibsphinxclient'
+    gemspec.author         = 'Dmytro Shteflyuk'
+    gemspec.extensions     = ['ext/extconf.rb']
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts 'Jeweler not available. Install it with: sudo gem install jeweler -s http://gemcutter.org'
 end
 
 desc 'Update SWIG wrapper for pure C searchd client API library'
