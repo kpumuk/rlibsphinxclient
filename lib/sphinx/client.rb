@@ -2,11 +2,11 @@
 # 
 # Author::    Dmytro Shteflyuk <mailto:kpumuk@kpumuk.info>.
 # Copyright:: Copyright (c) 2006 - 2009 Dmytro Shteflyuk
-# License::   Distributes under the GPLv2 license.
-# Version::   0.2.0
+# License::   Distributes under the MIT license.
+# Version::   0.2.2
 # Website::   http://kpumuk.info/projects/ror-plugins/sphinx
 #
-# This library is distributed under the terms of the GPLv2 license.
+# This library is distributed under the terms of the MIT license.
 
 # == Sphinx Client API
 # 
