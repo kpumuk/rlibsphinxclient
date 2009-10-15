@@ -1,3 +1,7 @@
+=== Version 0.2.2 / 2009-10-15
+
+* Moved from Echoe to Jeweler, gem is hosted on Gemcutter now.
+
 === Version 0.2.1 / 2009-01-27
 
 * 4 minor bug fixes

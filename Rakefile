@@ -28,7 +28,7 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title    = 'rlibsphinxclient'
   rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README.rdoc', 'CHANGELOG.rdoc', 'LICENSE')
+  rdoc.rdoc_files.include('README.rdoc', 'CHANGELOG.rdoc', 'MIT-LICENSE')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
